@@ -1,0 +1,22 @@
+V parameter "perturbation_strength" is not needed when computing the jacobian
+V check if normalization is correct, i.e., total number of node couples -> N(N-1)/2
+* Move from networkx to igraph
+* fare comparison diffusion distance - jacobian distance - una sopra l'altra
+per vedere su che modelli funziona bene e su che altri no
+-> normalizzare rispetto alla perturbazione
+-> vedere che riesce a ricreare il numero giusto di cluster, come fatto nel paper originale
+- comparison diffusion distance - jacobian su oscillators (paper manlio)
+* provare a simulare su connettoma
+
+* Guardare Barzel
+* dinamiche solo deterministiche??
+
+* option (i)
+- try with mean-field
+- try with annealed approximation
+
+* option (ii)
+- like diffusion: simulate the dynamics of N random walker starting from node i, count how many reach node j after T steps
+-> from diffusion equation to transition prob matrix, we can do the same with the jacobian
+
+
