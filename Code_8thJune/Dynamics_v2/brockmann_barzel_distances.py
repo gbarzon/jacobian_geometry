@@ -167,7 +167,7 @@ def Barzel_and_Brockmann_Distance(G, tau, distance_matrix, node):
     return barzel_distances, brockmann_distances
 
 
-def Barzel_and_Brockmann_Matrix(G,tau, distance_matrix):
+def Barzel_and_Brockmann_Matrix(G, tau, distance_matrix):
     '''
     Produces the full matrices of distances
     '''

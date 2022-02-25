@@ -4,7 +4,8 @@ from scipy.integrate import odeint
 from scipy.optimize import fsolve
 from scipy.sparse.linalg import spsolve
 import networkx as nx
-from scipy.linalg import expm
+from scipy.linalg import expm, eigh
+
 import Mutualistic as mut
 import Biochemical as bio
 import Population as pop
@@ -46,13 +47,38 @@ def Check_SteadyState(times,xx,G,epsilon):
 	#return  xx[:t_ss,:]
 	return xx
 
+def Check_Char_Time(xx,times,epsilon):
+	'''
+	Function to check if dynamics has reached a steady state: this is evaluated when
+	increment = max{ (x[t+1] - x[t])/(x[t]*dt) } < epsilon
+	'''
+	delta_t = times[1]-times[0]
+	char_time = np.inf
+
+	for t in range(1,len(times)):
+		increments = np.sum( np.abs((xx[t]-xx[t-1])/xx[t]/delta_t) )
+
+		if increments < epsilon:
+			char_time = times[t]
+			break
+		else:
+			continue
+
+	#if char_time == np.inf:
+		#char_time = len(xx[0])
+        #raise ValueError('Did not reach steady state - consider higher epislon or longer integration')
+        
+
+	# return filtered dynamics up to the steady state found
+	return char_time
+
 
  
 def Numerical_Integration(G, dynamics, initial_state, 
 						times = np.linspace(0,20, num = 2000),
 						fixed_node = 1e+12, 
 						show = False, 
-						epsilon = 10**(-2)):
+						epsilon = 1e0):
     '''
 	Kwargs:
 	- fixed_nodes: list of integers of nodes indexes to be kept constant during integrations 
@@ -84,27 +110,30 @@ def Numerical_Integration(G, dynamics, initial_state,
         
     # check if steady state is reached and filter
 #    xx = Check_SteadyState(times,xx,G,epsilon = epsilon)
-    
+
+    # Compute characteristic time
+    char_time = Check_Char_Time(xx,times,epsilon=epsilon)
+        
     # plotting each node dynamics
     if show == True:
         metadata = dict(G.nodes(data=True))
         if metadata[list(G.nodes())[0]] == {}: #No community structure, no metadata
             plt.figure(1)
-            for i in G.nodes():
-                if i == fixed_node:
-                    plt.plot(times[:len(xx[:,i])],xx[:,i],'o-')
-                else:
-                    plt.plot(times[:len(xx[:,i])],xx[:,i])
-                plt.title("time evolution of nodes state - up to steady state")
-        	
             if dynamics == 'Synchronization':
-                plt.figure(2)
                 for i in G.nodes():
                     if i == fixed_node:
                         plt.plot(times[:len(xx[:,i])],xx[:,i],'o-')
                     else:
                         plt.plot(times[:len(xx[:,i])],xx[:,i]%(2*np.pi))
                     plt.title("time evolution of nodes state - up to steady state [RESCALED]")
+            else:
+                for i in G.nodes():
+                    if i == fixed_node:
+                        plt.plot(times[:len(xx[:,i])],xx[:,i],'o-')
+                    else:
+                        plt.plot(times[:len(xx[:,i])],xx[:,i])
+                    plt.axvline(char_time)
+                    plt.title("time evolution of nodes state - up to steady state")
             plt.show()
         
         elif list(metadata[list(G.nodes())[0]].keys()) == ['block']: #I'm dealing with communities, called "blocks"
@@ -116,6 +145,7 @@ def Numerical_Integration(G, dynamics, initial_state,
                     plt.plot(times[:len(xx[:,i])],xx[:,i],'o-')
                 else:
                     plt.plot(times[:len(xx[:,i])],xx[:,i], color = colors[list(metadata.values())[i]['block']])
+                plt.axvline(char_time)
                 plt.title("time evolution of nodes state - up to steady state")
         	
             if dynamics == 'Synchronization':
@@ -131,7 +161,7 @@ def Numerical_Integration(G, dynamics, initial_state,
         else:
             raise ValueError('Metadata not identified, manual exiting!')
             
-    return xx
+    return xx, char_time
 
 def Numerical_Integration_perturbation(G, dynamics, SteadyState_ref, node1, node2, perturbation_strength,
                 						times = np.linspace(0,20, num = 2000),
@@ -319,13 +349,25 @@ def Jacobian(G, dynamics, SteadyState, t_list, perturbation_strength=1., return_
         print(dynamics)
         raise ValueError('Unknown dynamics. Manual exiting')
     
-    
+    '''
     # Checking that matrix is symmetric (in the position of the elements, not in their value)
     J2 = J/J
     J2[np.isnan(J2)] = 0
     if check_symmetric(J2) == False:
         raise ValueError("The Jacobian is not symmetric. Manual exiting")
+    '''
     
+    # Normalize the time wrt norm of jacobian
+    #print('J_norm: ', np.sum(np.abs(J)))
+    #t_list = t_list / np.sum(np.abs(J))
+    
+    #larg_eig = eigh(J, eigvals_only=True, subset_by_index=[num_nodes-1, num_nodes-1])
+    larg_eig = eigh(J, eigvals_only=True)
+    larg_eig = np.max(np.abs(larg_eig))
+    print('largest eig:', larg_eig)
+    
+    # Normalize times wrt larg eig
+    t_list = t_list / larg_eig
     
     d_t = np.zeros(T) # average distance at different t
     
