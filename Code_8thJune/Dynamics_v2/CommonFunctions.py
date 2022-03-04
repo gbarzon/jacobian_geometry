@@ -362,12 +362,13 @@ def Jacobian(G, dynamics, SteadyState, t_list, perturbation_strength=1., return_
     #t_list = t_list / np.sum(np.abs(J))
     
     #larg_eig = eigh(J, eigvals_only=True, subset_by_index=[num_nodes-1, num_nodes-1])
-    larg_eig = eigh(J, eigvals_only=True)
-    larg_eig = np.max(np.abs(larg_eig))
+    eigs = eigh(J, eigvals_only=True)
+    larg_eig = np.max(np.abs(eigs))
     print('largest eig:', larg_eig)
+    print('eigs sum:', np.sum(eigs))
     
     # Normalize times wrt larg eig
-    t_list = t_list / larg_eig
+    #t_list = t_list / larg_eig
     
     d_t = np.zeros(T) # average distance at different t
     
@@ -409,6 +410,11 @@ def Laplacian(Aij, t_list, norm=True, return_snapshot=False):
         L = np.eye(num_nodes) - Aij / np.sum(Aij, axis=1)[:,None]
     else:
         L = np.eye(num_nodes) - Aij
+        
+    eigs = eigh(L, eigvals_only=True)
+    larg_eig = np.max(np.abs(eigs))
+    print('largest eig:', larg_eig)
+    print('eigs sum:', np.sum(eigs))
     
     d_t = np.zeros(T) # average distance at different t
     
