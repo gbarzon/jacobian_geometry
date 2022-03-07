@@ -1,9 +1,5 @@
-
-
 import numpy as np
 import networkx as nx
-
-
 
 
 def Model_Mutualistic(xx, t, G, fixed_node, B = .1, R = .1, b = 2):

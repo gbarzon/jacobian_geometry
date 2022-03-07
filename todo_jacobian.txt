@@ -2,6 +2,11 @@ V parameter "perturbation_strength" is not needed when computing the jacobian
 V check if normalization is correct, i.e., total number of node couples -> N(N-1)/2
 V comparison diffusion distance - jacobian distance
 
+* Create function for plotting (instead of copy and paste)
+* Mean over different steady states
+
+* Varying parameters in a 2x2 grid
+
 * Implement hierarchical clustering, plot beside average distance matrix
 * Compute Mantel test btw different average matrices (also Brockmann and Barzel distances)
 

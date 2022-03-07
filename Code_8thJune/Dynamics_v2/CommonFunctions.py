@@ -78,7 +78,8 @@ def Numerical_Integration(G, dynamics, initial_state,
 						times = np.linspace(0,20, num = 2000),
 						fixed_node = 1e+12, 
 						show = False, 
-						epsilon = 1e0):
+						epsilon = 1e0,
+                        args = []):
     '''
 	Kwargs:
 	- fixed_nodes: list of integers of nodes indexes to be kept constant during integrations 
@@ -87,23 +88,23 @@ def Numerical_Integration(G, dynamics, initial_state,
     '''
 
     if dynamics == 'Mutualistic':
-        xx = odeint(mut.Model_Mutualistic, initial_state, times, args = (G,fixed_node))
+        xx = odeint(mut.Model_Mutualistic, initial_state, times, args = (G,fixed_node, *args))
     elif dynamics == 'Biochemical':
-        xx = odeint(bio.Model_Biochemical, initial_state, times, args = (G,fixed_node))
+        xx = odeint(bio.Model_Biochemical, initial_state, times, args = (G,fixed_node, *args))
     elif dynamics == 'Population':
-        xx = odeint(pop.Model_Population, initial_state, times, args = (G,fixed_node))
+        xx = odeint(pop.Model_Population, initial_state, times, args = (G,fixed_node, *args))
     elif dynamics == 'Regulatory':
-        xx = odeint(reg.Model_Regulatory, initial_state, times, args = (G,fixed_node))
+        xx = odeint(reg.Model_Regulatory, initial_state, times, args = (G,fixed_node, *args))
     elif dynamics == 'Regulatory2':
-        xx = odeint(reg2.Model_Regulatory2, initial_state, times, args = (G,fixed_node))
+        xx = odeint(reg2.Model_Regulatory2, initial_state, times, args = (G,fixed_node, *args))
     elif dynamics == 'Epidemics':
-        xx = odeint(epi.Model_Epidemics, initial_state, times, args = (G,fixed_node))
+        xx = odeint(epi.Model_Epidemics, initial_state, times, args = (G,fixed_node, *args))
     elif dynamics == 'Synchronization':
-        xx = odeint(syn.Model_Synchronization, initial_state, times, args = (G,fixed_node))
+        xx = odeint(syn.Model_Synchronization, initial_state, times, args = (G,fixed_node, *args))
     elif dynamics == 'Neuronal':
-        xx = odeint(neu.Model_Neuronal, initial_state, times, args = (G,fixed_node))
+        xx = odeint(neu.Model_Neuronal, initial_state, times, args = (G,fixed_node, *args))
     elif dynamics == 'NoisyVM':
-        xx = odeint(nvm.Model_NoisyVM, initial_state, times, args = (G,fixed_node))
+        xx = odeint(nvm.Model_NoisyVM, initial_state, times, args = (G,fixed_node, *args))
     else:
         print(dynamics)
         raise ValueError('Unknown dynamics. Manual exiting')
@@ -322,29 +323,29 @@ def oldJacobian(G, dynamics, SteadyState, perturbation_strength, t_list):
 
     return d_t
 
-def Jacobian(G, dynamics, SteadyState, t_list, perturbation_strength=1., return_snapshot=False):
+def Jacobian(G, dynamics, SteadyState, t_list, perturbation_strength=1., norm = False, return_snapshot=False, args = []):
     
     num_nodes = G.number_of_nodes()
     T = len(t_list)
     
     if dynamics == 'Mutualistic':
-        J = mut.Jacobian_Mutualistic(G, SteadyState)
+        J = mut.Jacobian_Mutualistic(G, SteadyState, *args)
     elif dynamics == 'Biochemical':
-        J = bio.Jacobian_Biochemical(G, SteadyState)
+        J = bio.Jacobian_Biochemical(G, SteadyState, *args)
     elif dynamics == 'Population':
-        J = pop.Jacobian_Population(G, SteadyState)
+        J = pop.Jacobian_Population(G, SteadyState, *args)
     elif dynamics == 'Regulatory':
-        J = reg.Jacobian_Regulatory(G, SteadyState)
+        J = reg.Jacobian_Regulatory(G, SteadyState, *args)
     elif dynamics == 'Regulatory2':
-        J = reg2.Jacobian_Regulatory2(G, SteadyState)
+        J = reg2.Jacobian_Regulatory2(G, SteadyState, *args)
     elif dynamics == 'Epidemics':
-        J = epi.Jacobian_Epidemics(G, SteadyState)
+        J = epi.Jacobian_Epidemics(G, SteadyState, *args)
     elif dynamics == 'Synchronization':
-        J = syn.Jacobian_Synchronization(G, SteadyState)
+        J = syn.Jacobian_Synchronization(G, SteadyState, *args)
     elif dynamics == 'Neuronal':
-        J = neu.Jacobian_Neuronal(G, SteadyState)
+        J = neu.Jacobian_Neuronal(G, SteadyState, *args)
     elif dynamics == 'NoisyVM':
-        J = nvm.Jacobian_NoisyVM(G, SteadyState)
+        J = nvm.Jacobian_NoisyVM(G, SteadyState, *args)
     else:
         print(dynamics)
         raise ValueError('Unknown dynamics. Manual exiting')
@@ -367,8 +368,9 @@ def Jacobian(G, dynamics, SteadyState, t_list, perturbation_strength=1., return_
     print('largest eig:', larg_eig)
     print('eigs sum:', np.sum(eigs))
     
-    # Normalize times wrt larg eig
-    #t_list = t_list / larg_eig
+    # Normalize times wrt eig sum
+    if norm:
+        t_list = t_list / num_nodes * abs(np.sum(eigs))
     
     d_t = np.zeros(T) # average distance at different t
     
