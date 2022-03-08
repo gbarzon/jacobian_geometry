@@ -370,7 +370,7 @@ def Jacobian(G, dynamics, SteadyState, t_list, perturbation_strength=1., norm = 
     
     # Normalize times wrt eig sum
     if norm:
-        t_list = t_list / num_nodes * abs(np.sum(eigs))
+        t_list = t_list * num_nodes / abs(np.sum(eigs))
     
     d_t = np.zeros(T) # average distance at different t
     
