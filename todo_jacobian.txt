@@ -1,26 +1,32 @@
+########## TODO ##########
+
 V parameter "perturbation_strength" is not needed when computing the jacobian
 V check if normalization is correct, i.e., total number of node couples -> N(N-1)/2
 V comparison diffusion distance - jacobian distance
 V create functions for plotting (instead of copy and paste)
 V show inter- vs intra- cluster distance
 V varying parameters in a grid
+V Implement hierarchical clustering
+V Show dendrogram beside average distance matrix
 
 * Plot everything with sns
-* Show dendrogram
-
-* Plottare evoluzione dovuta a perturbazione
-* Mean over different steady states
-
-* Implement hierarchical clustering, plot beside average distance matrix
-* Compute Mantel test btw different average matrices (also Brockmann and Barzel distances)
-
+* Compute Mantel test btw different average matrices (also Brockmann and Barzel distances) ???
 * Define a characteristic time, in order to sample
 i.e. -) relaxation time -) norm of jacobian
 * Try hierarchical clustering for different ratio in GN network (see suppl mat)
-
 * Move from networkx to igraph
+* Simulate on connectome
 
-* provare a simulare su connettoma
+
+??????????? QUESTIONS ???????????
+- Non sarebbe meglio usare la stessa notazione dei previous paper, i.e., row vector instead of column vector??
+- Generalized diffusion equation
+
+- Qual è il tempo caratteristico di una dinamica diffusiva wrt dinamica jacobiana?
+- Dinamica neuronale: what happens?
+- Paragonare diffusion vs jacobian distance
+- Correlare classificazione di Barzel, come lui classifica i modelli
+
 
 # option (i)
 - try with mean-field
@@ -29,9 +35,3 @@ i.e. -) relaxation time -) norm of jacobian
 # option (ii)
 - like diffusion: simulate the dynamics of N random walker starting from node i, count how many reach node j after T steps
 -> from diffusion equation to transition prob matrix, we can do the same with the jacobian
-
-??? QUESTIONS
-- Qual è il tempo caratteristico di una dinamica diffusiva wrt dinamica jacobiana?
-- Dinamica neuronale: what happens?
-- Paragonare diffusion vs jacobian distance
-- Correlare classificazione di Barzel, come lui classifica i modelli

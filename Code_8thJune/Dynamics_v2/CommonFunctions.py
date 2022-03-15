@@ -429,7 +429,7 @@ def Laplacian(Aij, t_list, norm=True, return_snapshot=False):
         
         for i in range(0, num_nodes):
             for j in range(i+1, num_nodes):
-                d_ij_tmp = expL[:,i] - expL[:,j]
+                d_ij_tmp = expL[i] - expL[j]
                 d_ij = np.sqrt(d_ij_tmp.dot(d_ij_tmp))
                 d += d_ij
                 
