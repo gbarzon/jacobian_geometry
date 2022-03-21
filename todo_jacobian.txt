@@ -8,17 +8,25 @@ V show inter- vs intra- cluster distance
 V varying parameters in a grid
 V Implement hierarchical clustering
 V Show dendrogram beside average distance matrix
+V Compute Mantel test btw different average matrices
+V Simulating diffusion distance with different parameters
+    -> if normalized, it seems independent of A -> maybe A related to decay (indeed A do not depend on topology)
+
+* Plot also normalized matrix over times -> check if they are similar
+* Plot eigenvalues of jacobian
 
 * Plot everything with sns
-* Compute Mantel test btw different average matrices (also Brockmann and Barzel distances) ???
+ (also Brockmann and Barzel distances) ???
 * Define a characteristic time, in order to sample
 i.e. -) relaxation time -) norm of jacobian
+check also paper "Multiscale Information Propagation in Emergent Functional Networks"
 * Try hierarchical clustering for different ratio in GN network (see suppl mat)
 * Move from networkx to igraph
 * Simulate on connectome
 
 
 ??????????? QUESTIONS ???????????
+
 - Non sarebbe meglio usare la stessa notazione dei previous paper, i.e., row vector instead of column vector??
 - Generalized diffusion equation
 

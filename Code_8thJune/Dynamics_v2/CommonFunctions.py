@@ -404,14 +404,14 @@ def Jacobian(G, dynamics, SteadyState, t_list, perturbation_strength=1., norm = 
     else:
         return d_t
     
-def Laplacian(Aij, t_list, norm=True, return_snapshot=False):
+def Laplacian(Aij, t_list, A=1., B=1., norm=True, return_snapshot=False):
     num_nodes = len(Aij)
     T = len(t_list)
     
     if norm:
-        L = np.eye(num_nodes) - Aij / np.sum(Aij, axis=1)[:,None]
+        L = A * np.eye(num_nodes) - B * Aij / np.sum(Aij, axis=1)[:,None]
     else:
-        L = np.eye(num_nodes) - Aij
+        L = A * np.eye(num_nodes) -  B * Aij
         
     eigs = eigh(L, eigvals_only=True)
     larg_eig = np.max(np.abs(eigs))
