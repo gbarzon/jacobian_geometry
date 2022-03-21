@@ -1,10 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-
-def get_average_norm(dist):
-    maxis = np.max(np.max(dist, axis=2), axis=1)
-    dist = dist / maxis[:,None,None]
-    return np.mean(dist, axis=0)
+from CommonFunctions import get_average_distance_matrix
 
 def plot_dist_matrix_evol(results, labels, t_print=[1, 5, 10, 20, 50], hspace = 0.0):
     t_print = [1, 5, 10, 20, 50]
@@ -38,10 +34,7 @@ def plot_average_dist_matrix(results, labels, n_rows=3, n_columns=3, norm = Fals
     for i, res in enumerate(results):
         plt.subplot(n_rows,n_columns,i+1)
     
-        if norm:
-            im = plt.imshow(get_average_norm(res[tmin:]), cmap='jet')
-        else:
-            im = plt.imshow(np.mean(res[tmin:],axis=0), cmap='jet')
+        im = plt.imshow(get_average_distance_matrix(res[tmin:], norm), cmap='jet')
             
         plt.colorbar(im,fraction=0.046, pad=0.04)
         plt.xticks([])
@@ -58,10 +51,7 @@ def plot_average_dist_matrix_square(results, labels_rows, labels_cols, norm = Fa
     for i, res in enumerate(results):
         plt.subplot(len(labels_rows),len(labels_cols),i+1)
     
-        if norm:
-            im = plt.imshow(get_average_norm(res[tmin:]), cmap='jet')
-        else:
-            im = plt.imshow(np.mean(res[tmin:],axis=0), cmap='jet')
+        im = plt.imshow(get_average_distance_matrix(res[tmin:], norm), cmap='jet')
             
         plt.colorbar(im,fraction=0.046, pad=0.04)
         plt.xticks([])

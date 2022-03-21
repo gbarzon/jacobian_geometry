@@ -12,6 +12,7 @@ V Compute Mantel test btw different average matrices
 V Simulating diffusion distance with different parameters
     -> if normalized, it seems independent of A -> maybe A related to decay (indeed A do not depend on topology)
 
+* Return eigenvalues from diffusion/jacobian functions
 * Plot also normalized matrix over times -> check if they are similar
 * Plot eigenvalues of jacobian
 

@@ -4,7 +4,7 @@ from scipy.integrate import odeint
 from scipy.optimize import fsolve
 from scipy.sparse.linalg import spsolve
 import networkx as nx
-from scipy.linalg import expm, eigh
+from scipy.linalg import expm, eig
 
 import Mutualistic as mut
 import Biochemical as bio
@@ -17,6 +17,12 @@ import Neuronal as neu
 import NoisyVM as nvm
 
 from tqdm.auto import tqdm
+
+def get_average_distance_matrix(dist, norm=False):
+    if norm:
+        maxis = np.max(np.max(dist, axis=2), axis=1)
+        dist = dist / maxis[:,None,None]
+    return np.mean(dist, axis=0)
 
 def check_symmetric(a, rtol=1e-05, atol=1e-08):
     #From https://stackoverflow.com/questions/42908334/checking-if-a-matrix-is-symmetric-in-numpy
@@ -362,11 +368,10 @@ def Jacobian(G, dynamics, SteadyState, t_list, perturbation_strength=1., norm = 
     #print('J_norm: ', np.sum(np.abs(J)))
     #t_list = t_list / np.sum(np.abs(J))
     
-    #larg_eig = eigh(J, eigvals_only=True, subset_by_index=[num_nodes-1, num_nodes-1])
-    eigs = eigh(J, eigvals_only=True)
-    larg_eig = np.max(np.abs(eigs))
-    print('largest eig:', larg_eig)
-    print('eigs sum:', np.sum(eigs))
+    eigs = eig(J)[0]
+    #larg_eig = np.max(np.abs(eigs))
+    #print('largest eig:', larg_eig)
+    #print('eigs sum:', np.sum(eigs))
     
     # Normalize times wrt eig sum
     if norm:
@@ -400,9 +405,9 @@ def Jacobian(G, dynamics, SteadyState, t_list, perturbation_strength=1., norm = 
         d_t[t] = d
         
     if return_snapshot:
-        return d_t, d_t_ij
+        return d_t, d_t_ij, eigs
     else:
-        return d_t
+        return d_t, eigs
     
 def Laplacian(Aij, t_list, A=1., B=1., norm=True, return_snapshot=False):
     num_nodes = len(Aij)
@@ -413,10 +418,10 @@ def Laplacian(Aij, t_list, A=1., B=1., norm=True, return_snapshot=False):
     else:
         L = A * np.eye(num_nodes) -  B * Aij
         
-    eigs = eigh(L, eigvals_only=True)
-    larg_eig = np.max(np.abs(eigs))
-    print('largest eig:', larg_eig)
-    print('eigs sum:', np.sum(eigs))
+    eigs = eig(L)[0]
+    #larg_eig = np.max(np.abs(eigs))
+    #print('largest eig:', larg_eig)
+    #print('eigs sum:', np.sum(eigs))
     
     d_t = np.zeros(T) # average distance at different t
     
@@ -445,9 +450,9 @@ def Laplacian(Aij, t_list, A=1., B=1., norm=True, return_snapshot=False):
         d_t[t] = d
         
     if return_snapshot:
-        return d_t, d_t_ij
+        return d_t, d_t_ij, eigs
     else:
-        return d_t
+        return d_t, eigs
 
 def LogHisto(data):
     bins = np.logspace(min(np.log10(data)), max(np.log10(data)), num = 10)
