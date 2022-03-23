@@ -5,10 +5,10 @@ import networkx as nx
 
 
 
-def Model_Regulatory(xx, t, G, fixed_node, B = .1, R = .1, a = 1, h = 1./3):
+def Model_Regulatory(xx, t, G, fixed_node, B = 1., R = 1., a = 1, h = 2):
     """
     m_0 = "-B * xx[i] ** a"; 
-    m_1 = "-R"; 
+    m_1 = "R"; 
     m_2 = "xx[j]**h / (1 + xx[j]**h)"
     """    
 
@@ -25,7 +25,7 @@ def Model_Regulatory(xx, t, G, fixed_node, B = .1, R = .1, a = 1, h = 1./3):
             dxdt.append(m_0 + m_1*m_2 )
     return np.array(dxdt)
 
-def Jacobian_Regulatory(G, SteadyState, B = .1, R = .1, a = 1, h = 1./3):
+def Jacobian_Regulatory(G, SteadyState, B = 1., R = 1., a = 1, h = 2):
 
     num_nodes = G.number_of_nodes()
     

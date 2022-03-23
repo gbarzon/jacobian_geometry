@@ -2,7 +2,7 @@ import numpy as np
 import networkx as nx
 
 
-def Model_Synchronization(xx, t, G, fixed_node, w = .5, R = .5):
+def Model_Synchronization(xx, t, G, fixed_node, w = 0., R = 1.):
 	"""
 	m_0 = "w"; 
     m_1 = "R"; 
@@ -22,7 +22,7 @@ def Model_Synchronization(xx, t, G, fixed_node, w = .5, R = .5):
 			dxdt.append(m_0 + m_1*m_2 )
 	return np.array(dxdt)
 
-def Jacobian_Synchronization(G, SteadyState, w = .5, R = .5):
+def Jacobian_Synchronization(G, SteadyState, w = 0., R = 1.):
 
     num_nodes = G.number_of_nodes()
     

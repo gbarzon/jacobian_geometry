@@ -59,7 +59,7 @@ def plot_average_dist_matrix_square(results, labels_rows, labels_cols, norm = Fa
         
         if i<len(labels_cols):
             plt.title(labels_cols[i])
-        if i%len(labels_rows)==0:
+        if i%len(labels_cols)==0:
             plt.ylabel(labels_rows[i//len(labels_cols)])
 
     plt.subplots_adjust(wspace=0, hspace=hspace)

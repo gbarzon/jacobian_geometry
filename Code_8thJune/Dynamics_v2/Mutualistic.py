@@ -2,7 +2,7 @@ import numpy as np
 import networkx as nx
 
 
-def Model_Mutualistic(xx, t, G, fixed_node, B = .1, R = .1, b = 2):
+def Model_Mutualistic(xx, t, G, fixed_node, B = 1., R = 1., b = 2):
 	"""
 	m_0 = "B * xx[i] * (1 - xx[i])"; m_1 = "R * xx[i]"; m_2 = "xx[j]**b / (1 + xx[j]**b)"
 	"""
@@ -20,7 +20,7 @@ def Model_Mutualistic(xx, t, G, fixed_node, B = .1, R = .1, b = 2):
 	return np.array(dxdt)
 
 
-def Jacobian_Mutualistic(G, SteadyState, B = .1, R = .1, b = 2):
+def Jacobian_Mutualistic(G, SteadyState, B = 1., R = 1., b = 2):
 
     num_nodes = G.number_of_nodes()
 

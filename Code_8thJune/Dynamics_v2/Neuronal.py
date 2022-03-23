@@ -4,7 +4,7 @@ import numpy as np
 import networkx as nx
 
 
-def Model_Neuronal(xx, t, G, fixed_node, B = .1, C = .1, R = .1):
+def Model_Neuronal(xx, t, G, fixed_node, B = 1., C = 1., R = 1.):
     """
     m_0 = "-B * xx[i] + C * tanh(xx[i])"; 
     m_1 = "R";
@@ -26,7 +26,7 @@ def Model_Neuronal(xx, t, G, fixed_node, B = .1, C = .1, R = .1):
     return np.array(dxdt)
 
 
-def Jacobian_Neuronal(G, SteadyState, B = .1, C = .1, R = .1):
+def Jacobian_Neuronal(G, SteadyState, B = 1., C = 1., R = 1.):
 
     num_nodes = G.number_of_nodes()
 

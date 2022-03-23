@@ -18,6 +18,9 @@ import NoisyVM as nvm
 
 from tqdm.auto import tqdm
 
+dynamics_list = ['Mutualistic', 'Biochemical', 'Population', 'Regulatory','Epidemics','Synchronization', 'Neuronal', 'NoisyVM', 'Diffusion']
+dynamics_short = ['MUT', 'BIO', 'POP', 'REG', 'EPI', 'SYN', 'NEU', 'NVM', 'DIF']
+
 def get_average_distance_matrix(dist, norm=False):
     if norm:
         maxis = np.max(np.max(dist, axis=2), axis=1)
@@ -375,7 +378,7 @@ def Jacobian(G, dynamics, SteadyState, t_list, perturbation_strength=1., norm = 
     
     # Normalize times wrt eig sum
     if norm:
-        t_list = t_list * num_nodes / abs(np.sum(eigs))
+        t_list = t_list / np.max(np.abs(eigs))
     
     d_t = np.zeros(T) # average distance at different t
     
@@ -389,7 +392,8 @@ def Jacobian(G, dynamics, SteadyState, t_list, perturbation_strength=1., norm = 
         
         for i in range(0, num_nodes):
             for j in range(i+1, num_nodes):
-                d_ij_tmp = perturbation_strength*(expJ[:,i] - expJ[:,j]) # qui potrei mettere dopo perturbation strength
+                #d_ij_tmp = perturbation_strength*(expJ[:,i] - expJ[:,j]) # qui potrei mettere dopo perturbation strength
+                d_ij_tmp = perturbation_strength*(expJ[i] - expJ[j])
                 d_ij = np.sqrt(d_ij_tmp.dot(d_ij_tmp))
                 d += d_ij
                 

@@ -15,6 +15,10 @@ V Return eigenvalues from diffusion/jacobian functions
 V Initial trend -> alpha == lambda max == A
   Final trend -> alpha == lambda min == A-B
 
+* Automatizzare codice per variare esponenti a, b
+* Aggiungere higher order interaction
+
+
 * Plot also normalized matrix over times -> check if they are similar
 * Plot eigenvalues of jacobian
 
@@ -29,6 +33,7 @@ check also paper "Multiscale Information Propagation in Emergent Functional Netw
 
 
 ??????????? QUESTIONS ???????????
+- Fissare termine -Axi -> decadimento esponenziale
 
 - Non sarebbe meglio usare la stessa notazione dei previous paper, i.e., row vector instead of column vector??
 - Generalized diffusion equation

@@ -4,7 +4,7 @@ import numpy as np
 import networkx as nx
 
 
-def Model_NoisyVM(xx, t, G, fixed_node, A = .04, B = .1, C = .04):
+def Model_NoisyVM(xx, t, G, fixed_node, A = 0., B = 1., C = 1.):
     """
     We need to ensure that B \geq A + C
     
@@ -27,7 +27,7 @@ def Model_NoisyVM(xx, t, G, fixed_node, A = .04, B = .1, C = .04):
     return np.array(dxdt)
 
 
-def Jacobian_NoisyVM(G, SteadyState, A = .04, B = .1, C = .04):
+def Jacobian_NoisyVM(G, SteadyState, A = 0., B = 1., C = 1.):
 
     num_nodes = G.number_of_nodes()
 
@@ -36,15 +36,17 @@ def Jacobian_NoisyVM(G, SteadyState, A = .04, B = .1, C = .04):
     for i in range(len(G.nodes())):
         #diagonal terms
         term1 = -B
+        '''
         if i in list(G.neighbors(i)): #selfloop!
-            term2 = C*SteadyState[i]/G.degree(i)
+            term2 = C/G.degree(i)
         else:
             term2 = 0
-        J[i][i] = term1+term2
+        '''
+        J[i][i] = term1 #+ term2
     
         #off-diagonal terms
         for neighbor in list(G.neighbors(i)):
-            J[i][neighbor] = C*SteadyState[neighbor]/G.degree(i)
+            J[i][neighbor] = C/G.degree(i)
 
     return J
 

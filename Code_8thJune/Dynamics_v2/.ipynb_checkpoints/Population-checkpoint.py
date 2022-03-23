@@ -4,7 +4,7 @@ import numpy as np
 import networkx as nx
 
 
-def Model_Population(xx, t, G, fixed_node, B = 3, R = 1, b = 1/2, a = 0.2):
+def Model_Population(xx, t, G, fixed_node, B = 1., R = 1., b = 3, a = 2):
     """
     m_0 = "-B * xx[i]**b"; 
     m_1 = "R "; 
@@ -29,7 +29,7 @@ def Model_Population(xx, t, G, fixed_node, B = 3, R = 1, b = 1/2, a = 0.2):
     return np.array(dxdt)
 
 
-def Jacobian_Population(G, SteadyState, B = 3, R = 1, b = 1/2, a = 0.2):
+def Jacobian_Population(G, SteadyState, B = 1., R = 1., b = 3, a = 2):
 
     num_nodes = G.number_of_nodes()
     

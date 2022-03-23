@@ -5,7 +5,7 @@ import networkx as nx
 
 
 
-def Model_Biochemical(xx, t, G, fixed_node, F = .1, B = .1, R = .1):
+def Model_Biochemical(xx, t, G, fixed_node, F = 1., B = 1., R = 1.):
     """
     m_0 = "F-B*xx[i]"
     m_1 = "xx[i]"
@@ -26,7 +26,7 @@ def Model_Biochemical(xx, t, G, fixed_node, F = .1, B = .1, R = .1):
     return np.array(dxdt)
 
 
-def Jacobian_Biochemical(G, SteadyState, F = .1, B = .1, R = .1):
+def Jacobian_Biochemical(G, SteadyState, F = 1., B = 1., R = 1.):
 
     num_nodes = G.number_of_nodes()
     
