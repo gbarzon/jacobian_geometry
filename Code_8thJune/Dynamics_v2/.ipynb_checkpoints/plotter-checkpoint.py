@@ -1,9 +1,13 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from seaborn import clustermap
+
 from CommonFunctions import get_average_distance_matrix
 
-def plot_dist_matrix_evol(results, labels, t_print=[1, 5, 10, 20, 50], hspace = 0.0):
-    t_print = [1, 5, 10, 20, 50]
+cmap = 'gist_heat'
+
+### Distance matrix vs time, average distance
+def plot_dist_matrix_evol(results, labels, t_print=[1, 5, 10, 20, 'avg', 'avg_norm'], hspace = 0.0):
 
     plt.figure(figsize=(20,30))
 
@@ -13,8 +17,13 @@ def plot_dist_matrix_evol(results, labels, t_print=[1, 5, 10, 20, 50], hspace = 
     for i, t in enumerate(t_print):
         for j, res in enumerate(results):
             plt.subplot(X,Y, i+1 + j*Y)
-    
-            im = plt.imshow(res[t], cmap='jet')
+            
+            if t=='avg':
+                im = plt.imshow(get_average_distance_matrix(res, norm=False), cmap=cmap)
+            elif t=='avg_norm':
+                im = plt.imshow(get_average_distance_matrix(res, norm=True), cmap=cmap)
+            else:
+                im = plt.imshow(res[t], cmap=cmap)
     
             plt.colorbar(im,fraction=0.046, pad=0.03)
             plt.xticks([])
@@ -34,7 +43,7 @@ def plot_average_dist_matrix(results, labels, n_rows=3, n_columns=3, norm = Fals
     for i, res in enumerate(results):
         plt.subplot(n_rows,n_columns,i+1)
     
-        im = plt.imshow(get_average_distance_matrix(res[tmin:], norm), cmap='jet')
+        im = plt.imshow(get_average_distance_matrix(res[tmin:], norm), cmap=cmap)
             
         plt.colorbar(im,fraction=0.046, pad=0.04)
         plt.xticks([])
@@ -51,7 +60,7 @@ def plot_average_dist_matrix_square(results, labels_rows, labels_cols, norm = Fa
     for i, res in enumerate(results):
         plt.subplot(len(labels_rows),len(labels_cols),i+1)
     
-        im = plt.imshow(get_average_distance_matrix(res[tmin:], norm), cmap='jet')
+        im = plt.imshow(get_average_distance_matrix(res[tmin:], norm), cmap=cmap)
             
         plt.colorbar(im,fraction=0.046, pad=0.04)
         plt.xticks([])
@@ -64,4 +73,27 @@ def plot_average_dist_matrix_square(results, labels_rows, labels_cols, norm = Fa
 
     plt.subplots_adjust(wspace=0, hspace=hspace)
     plt.tight_layout()
+    plt.show()
+    
+### Clustering
+def plot_clustermap(matrix, row_colors=None, method='complete', figsize=(10,10), linewidths=1.5, title='', name_to_save=None, dpi=200):
+    
+    clust_map = clustermap(matrix, method=method,
+                           cbar_kws = dict(orientation="horizontal"),
+                           row_colors=row_colors,
+                           tree_kws=dict(linewidths=linewidths),
+                           figsize=figsize)
+
+    clust_map.ax_col_dendrogram.set_visible(False) # hide dendrogram above columns
+    #clust_map.set(xlabel='my x label', ylabel='my y label')
+    
+    # Setup colorbar
+    x0, _y0, _w, _h = clust_map.cbar_pos
+    clust_map.ax_cbar.set_position([x0*20, 0.825, clust_map.ax_row_dendrogram.get_position().width*2, 0.02])
+    clust_map.ax_cbar.set_title('distance')
+    
+    plt.title(title)
+    
+    if name_to_save is not None:
+        plt.savefig(name_to_save+'.png', dpi=dpi)
     plt.show()

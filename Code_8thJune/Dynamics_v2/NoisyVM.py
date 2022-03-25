@@ -1,10 +1,8 @@
-
-
 import numpy as np
 import networkx as nx
 
 
-def Model_NoisyVM(xx, t, G, fixed_node, A = 0., B = 1., C = 1.):
+def Model_NoisyVM(xx, t, G, fixed_node, A = 0.5, B = 1., C = 0.5):
     """
     We need to ensure that B \geq A + C
     
@@ -27,7 +25,7 @@ def Model_NoisyVM(xx, t, G, fixed_node, A = 0., B = 1., C = 1.):
     return np.array(dxdt)
 
 
-def Jacobian_NoisyVM(G, SteadyState, A = 0., B = 1., C = 1.):
+def Jacobian_NoisyVM(G, SteadyState, A = 0.5, B = 1., C = 0.5):
 
     num_nodes = G.number_of_nodes()
 
@@ -49,10 +47,3 @@ def Jacobian_NoisyVM(G, SteadyState, A = 0., B = 1., C = 1.):
             J[i][neighbor] = C/G.degree(i)
 
     return J
-
-
-
-
-
-
-

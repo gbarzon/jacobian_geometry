@@ -2,3 +2,6 @@
 .git
 .gitattributes
 */.ipynb_checkpoints/*
+.ipynb_checkpoints/*
+*/*/.ipynb_checkpoints/*
+*.png

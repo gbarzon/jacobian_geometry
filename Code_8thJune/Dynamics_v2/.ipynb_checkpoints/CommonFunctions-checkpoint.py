@@ -15,6 +15,7 @@ import Epidemics as epi
 import Synchronization as syn
 import Neuronal as neu 
 import NoisyVM as nvm
+import DiffusionInteraction as dfi
 
 from tqdm.auto import tqdm
 
@@ -114,6 +115,8 @@ def Numerical_Integration(G, dynamics, initial_state,
         xx = odeint(neu.Model_Neuronal, initial_state, times, args = (G,fixed_node, *args))
     elif dynamics == 'NoisyVM':
         xx = odeint(nvm.Model_NoisyVM, initial_state, times, args = (G,fixed_node, *args))
+    elif dynamics == 'DiffInt':
+        xx = odeint(dfi.Model_DiffusionInteraction, initial_state, times, args = (G,fixed_node, *args))
     else:
         print(dynamics)
         raise ValueError('Unknown dynamics. Manual exiting')
@@ -171,7 +174,7 @@ def Numerical_Integration(G, dynamics, initial_state,
         else:
             raise ValueError('Metadata not identified, manual exiting!')
             
-    return xx, char_time
+    return xx
 
 def Numerical_Integration_perturbation(G, dynamics, SteadyState_ref, node1, node2, perturbation_strength,
                 						times = np.linspace(0,20, num = 2000),
@@ -355,6 +358,8 @@ def Jacobian(G, dynamics, SteadyState, t_list, perturbation_strength=1., norm = 
         J = neu.Jacobian_Neuronal(G, SteadyState, *args)
     elif dynamics == 'NoisyVM':
         J = nvm.Jacobian_NoisyVM(G, SteadyState, *args)
+    elif dynamics == 'DiffInt':
+        J = dfi.Jacobian_DiffusionInteraction(G, SteadyState, *args)
     else:
         print(dynamics)
         raise ValueError('Unknown dynamics. Manual exiting')
