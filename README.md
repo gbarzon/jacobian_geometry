@@ -1,6 +1,6 @@
 # Jacobian geometry
 
-########## TODO ##########
+## Changes
 
 V parameter "perturbation_strength" is not needed when computing the jacobian\
 V check if normalization is correct, i.e., total number of node couples -> N(N-1)/2\
@@ -20,6 +20,8 @@ V Initial trend -> alpha == lambda max == A\
 V Define a characteristic time -> lambda max\
 V Plot everything with same cmap\
 V Automatize for various parameters\
+
+## TODO
 
 * Compare with Brockmann-Barzel metric\
 * Try hierarchical clustering for different ratio in GN network (see suppl mat)\
