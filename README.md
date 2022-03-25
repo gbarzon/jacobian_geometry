@@ -19,14 +19,14 @@ V Initial trend -> alpha == lambda max == A\
   Final trend -> alpha == lambda min == A-B\
 V Define a characteristic time -> lambda max\
 V Plot everything with same cmap\
-V Automatize for various parameters\
+V Automatize for various parameters
 
 ## TODO
 
-* Compare with Brockmann-Barzel metric\
-* Try hierarchical clustering for different ratio in GN network (see suppl mat)\
-* Move from networkx to igraph\
-* Simulate on connectome\
+* Compare with Brockmann-Barzel metric
+* Try hierarchical clustering for different ratio in GN network (see suppl mat)
+* Move from networkx to igraph
+* Simulate on connectome
 
 ## option (i)
 - try with mean-field
