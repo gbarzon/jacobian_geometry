@@ -12,21 +12,14 @@ V Compute Mantel test btw different average matrices
 V Simulating diffusion distance with different parameters
     -> if normalized, it seems independent of A -> maybe A related to decay (indeed A do not depend on topology)
 V Return eigenvalues from diffusion/jacobian functions
+V Plot eigenvalues of jacobian
 V Initial trend -> alpha == lambda max == A
   Final trend -> alpha == lambda min == A-B
+V Define a characteristic time -> lambda max
+V Plot everything with same cmap
+V Automatizzare codice per variare esponenti a, b
 
-* Automatizzare codice per variare esponenti a, b
-* Aggiungere higher order interaction
-
-
-* Plot also normalized matrix over times -> check if they are similar
-* Plot eigenvalues of jacobian
-
-* Plot everything with sns
- (also Brockmann and Barzel distances) ???
-* Define a characteristic time, in order to sample
-i.e. -) relaxation time -) norm of jacobian
-check also paper "Multiscale Information Propagation in Emergent Functional Networks"
+* Compare with Brockmann-Barzel metric
 * Try hierarchical clustering for different ratio in GN network (see suppl mat)
 * Move from networkx to igraph
 * Simulate on connectome
