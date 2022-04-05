@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from seaborn import clustermap
 
-from CommonFunctions import get_average_distance_matrix
+from utils.CommonFunctions import get_average_distance_matrix
 
 cmap = 'gist_heat'
 

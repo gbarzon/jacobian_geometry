@@ -6,16 +6,16 @@ from scipy.sparse.linalg import spsolve
 import networkx as nx
 from scipy.linalg import expm, eig
 
-import Mutualistic as mut
-import Biochemical as bio
-import Population as pop
-import Regulatory as reg
-import Regulatory2 as reg2
-import Epidemics as epi
-import Synchronization as syn
-import Neuronal as neu 
-import NoisyVM as nvm
-import DiffusionInteraction as dfi
+import utils.Dynamics.Mutualistic as mut
+import utils.Dynamics.Biochemical as bio
+import utils.Dynamics.Population as pop
+import utils.Dynamics.Regulatory as reg
+import utils.Dynamics.Regulatory2 as reg2
+import utils.Dynamics.Epidemics as epi
+import utils.Dynamics.Synchronization as syn
+import utils.Dynamics.Neuronal as neu 
+import utils.Dynamics.NoisyVM as nvm
+import utils.Dynamics.DiffusionInteraction as dfi
 
 from tqdm.auto import tqdm
 
@@ -427,7 +427,7 @@ def Laplacian(Aij, t_list, A=1., B=1., norm=True, return_snapshot=False):
     else:
         L = A * np.eye(num_nodes) -  B * Aij
         
-    eigs = eig(L)[0]
+    eigs = eig(L)[0] * -1
     #larg_eig = np.max(np.abs(eigs))
     #print('largest eig:', larg_eig)
     #print('eigs sum:', np.sum(eigs))

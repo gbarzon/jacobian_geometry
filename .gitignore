@@ -5,3 +5,6 @@
 .ipynb_checkpoints/*
 */*/.ipynb_checkpoints/*
 *.png
+*.pptx
+*/__pycache__/
+*/Dynamics/__pycache__/
