@@ -1,5 +1,3 @@
-
-
 import numpy as np
 import networkx as nx
 
@@ -24,7 +22,6 @@ def Model_Population(xx, t, G, fixed_node, B = 1., R = 1., b = 3, a = 2):
             m_2 = sum([xx_powa[j] for j in G.neighbors(i)])
             
             dxdt.append(m_0 + m_1*m_2)
-#            print(m_2)
             
     return np.array(dxdt)
 
