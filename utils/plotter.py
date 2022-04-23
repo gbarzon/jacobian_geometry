@@ -1,13 +1,15 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from seaborn import clustermap
+from scipy.cluster.hierarchy import linkage
+from scipy.spatial.distance import squareform
 
 from utils.CommonFunctions import get_average_distance_matrix
 
 cmap = 'gist_heat'
 
 ### Distance matrix vs time, average distance
-def plot_dist_matrix_evol(results, labels, t_print=[1, 5, 10, 20, 'avg', 'avg_norm'], hspace = 0.0):
+def plot_dist_matrix_evol(results, labels, t_print=[1, 5, 10, 20, 'avg'], hspace = 0.0): # removed 'avg_norm'
 
     plt.figure(figsize=(20,30))
 
@@ -76,9 +78,14 @@ def plot_average_dist_matrix_square(results, labels_rows, labels_cols, norm = Fa
     plt.show()
     
 ### Clustering
+# clustermap want 2d array of observation, not 2d symmetric distance matrix
+# thus, we have to pre compute the linkage and pass it to clustermap
+# https://stackoverflow.com/questions/38705359/how-to-give-sns-clustermap-a-precomputed-distance-matrix
 def plot_clustermap(matrix, row_colors=None, method='complete', figsize=(10,10), linewidths=1.5, title='', name_to_save=None, dpi=200):
     
-    clust_map = clustermap(matrix, method=method,
+    mylinkage = linkage(squareform(matrix), method=method)
+    
+    clust_map = clustermap(matrix, row_linkage=mylinkage, col_linkage=mylinkage,
                            cbar_kws = dict(orientation="horizontal"),
                            row_colors=row_colors,
                            tree_kws=dict(linewidths=linewidths),

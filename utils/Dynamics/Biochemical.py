@@ -1,9 +1,5 @@
-
-
 import numpy as np
 import networkx as nx
-
-
 
 def Model_Biochemical(xx, t, G, fixed_node, F = 1., B = 1., R = 1.):
     """
