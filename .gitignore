@@ -1,10 +1,7 @@
 .DS_Store
 .git
 .gitattributes
-*/.ipynb_checkpoints/*
-.ipynb_checkpoints/*
-*/*/.ipynb_checkpoints/*
+**/.ipynb_checkpoints/
 *.png
 *.pptx
-*/__pycache__/
-*/Dynamics/__pycache__/
+**/__pycache__/
