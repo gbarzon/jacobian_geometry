@@ -1,10 +1,46 @@
-
-
 import numpy as np
 import networkx as nx
 
 
+def Model_Epidemics(xx, t, G, fixed_node, B = 1., R = 1.):
+    """
+    m_0 = "-B * xx[i] "
+    m_1 = "R * (1-xx[i])"
+    m_2 = "xx[j]"
+    """
+    
+    return -B * xx + R * (1-xx) * np.sum(xx*G, axis=1)
 
+def Jacobian_Epidemics(G, SteadyState, B = 1., R = 1.):
+    num_nodes = G.shape[0]
+    
+    J = ( -B -np.sum(SteadyState*G, axis=1) ) * np.eye(num_nodes) + R*(1-SteadyState)[:,None]*G
+    
+    return J
+
+def Model_Epidemics_norm(xx, t, G, fixed_node, B = 1., R = 1.):
+    """
+    m_0 = "-B * xx[i] "
+    m_1 = "R * (1-xx[i])"
+    m_2 = "xx[j]"
+    """
+    
+    G = G / np.sum(G, axis=0)
+    
+    return -B * xx + R * (1-xx) * np.sum(xx*G, axis=1)
+
+
+def Jacobian_Epidemics_norm(G, SteadyState, B = 1., R = 1.):
+    num_nodes = G.shape[0]
+    
+    G = G / np.sum(G, axis=0)
+    
+    J = ( -B -np.sum(SteadyState*G, axis=1) ) * np.eye(num_nodes) + R*(1-SteadyState)[:,None]*G
+    
+    return J
+
+
+'''
 def Model_Epidemics(xx, t, G, fixed_node, B = 1., R = 1.):
 	"""
 	m_0 = "-B * xx[i] "
@@ -42,10 +78,4 @@ def Jacobian_Epidemics(G, SteadyState, B = 1., R = 1.):
             J[i][neighbor] = R*(1-SteadyState[i])
 
     return J
-
-
-
-
-
-
-
+'''

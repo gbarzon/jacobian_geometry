@@ -1,7 +1,38 @@
-
-
 import numpy as np
 import networkx as nx
+
+def Model_Neuronal_array(xx, t, G, B = 1., C = 1., R = 1.):
+    """
+    m_0 = "-B * xx[i] + C * tanh(xx[i])"; 
+    m_1 = "R";
+    m_2 = "tanh(xx[j])"
+    """    
+    
+    tan_xx = np.tanh(xx)
+    
+    dxdt = np.zeros(len(G))
+    
+    # TODO: togliere loop
+    
+    for i in range(len(G)):
+        m_0 = -B * xx[i]
+        m_1 = C * tan_xx[i]
+        m_2 = R * np.sum(G[i]*tan_xx)
+
+        dxdt[i] = m_0 + m_1 + m_2
+    return dxdt
+
+
+def Jacobian_Neuronal_array(G, SteadyState, B = 1., C = 1., R = 1.):
+    sech2_ss = 1/(np.power(np.cosh(SteadyState),2))
+    
+    # diagonal terms
+    J = np.diag( -B*np.ones(len(G)) + C*sech2_ss)
+    
+    # off diagonal terms
+    J += R * G * sech2_ss
+
+    return J
 
 
 def Model_Neuronal(xx, t, G, fixed_node, B = 1., C = 1., R = 1.):

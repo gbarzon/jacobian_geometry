@@ -237,7 +237,6 @@ def laplacian_matrix(A, method='rwL'):
         L = np.matmul(L, D_minus_half)
 
     elif method != 'L':
-
         raise ValueError(("Valid options for the method parameter are: "
                           "\'rwL\', \'nL\' or \'L\'."))
 

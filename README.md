@@ -22,16 +22,3 @@ V Plot everything with same cmap\
 V Automatize for various parameters
 
 ## TODO
-
-* Compare with Brockmann-Barzel metric
-* Try hierarchical clustering for different ratio in GN network (see suppl mat)
-* Move from networkx to igraph
-* Simulate on connectome
-
-## option (i)
-- try with mean-field
-- try with annealed approximation
-
-## option (ii)
-- like diffusion: simulate the dynamics of N random walker starting from node i, count how many reach node j after T steps
--> from diffusion equation to transition prob matrix, we can do the same with the jacobian

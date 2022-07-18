@@ -1,7 +1,6 @@
 import numpy as np
 import networkx as nx
 
-
 def Model_Population(xx, t, G, fixed_node, B = 1., R = 1., b = 3, a = 2):
     """
     m_0 = "-B * xx[i]**b"; 
@@ -49,10 +48,3 @@ def Jacobian_Population(G, SteadyState, B = 1., R = 1., b = 3, a = 2):
             J[i][neighbor] = R*a*ss_powa[neighbor]
 
     return J
-
-
-
-
-
-
-
