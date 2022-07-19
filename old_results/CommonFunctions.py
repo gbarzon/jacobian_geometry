@@ -109,18 +109,14 @@ def Numerical_Integration(G, dynamics, initial_state,
         xx = odeint(reg2.Model_Regulatory2, initial_state, times, args = (G,fixed_node, *args))
     elif dynamics == 'Epidemics':
         xx = odeint(epi.Model_Epidemics, initial_state, times, args = (G,fixed_node, *args))
-    elif dynamics == 'Epidemics_norm':
-        xx = odeint(epi.Model_Epidemics_norm, initial_state, times, args = (G,fixed_node, *args))
     elif dynamics == 'Synchronization':
-        xx = odeint(syn.Model_Synchronization, initial_state, times, args = (G,fixed_node, *args))
-    elif dynamics == 'Synchronization_norm':
-        xx = odeint(syn.Model_Synchronization_norm, initial_state, times, args = (G,fixed_node, *args))
+        xx = odeint(syn.Model_Synchronization, initial_state, times, args = (G, fixed_node, *args))
+        elif dynamics == 'Synchronization_norm':
+        xx = odeint(syn.Model_Synchronization_norm, initial_state, times, args = (G, fixed_node, *args))
     elif dynamics == 'Neuronal':
         xx = odeint(neu.Model_Neuronal, initial_state, times, args = (G,fixed_node, *args))
     elif dynamics == 'NoisyVM':
         xx = odeint(nvm.Model_NoisyVM, initial_state, times, args = (G,fixed_node, *args))
-    elif dynamics == 'NoisyVM_norm':
-        xx = odeint(nvm.Model_NoisyVM_norm, initial_state, times, args = (G,fixed_node, *args))
     elif dynamics == 'DiffInt':
         xx = odeint(dfi.Model_DiffusionInteraction, initial_state, times, args = (G,fixed_node, *args))
     else:
@@ -135,7 +131,7 @@ def Numerical_Integration(G, dynamics, initial_state,
         
     # plotting each node dynamics
     if show == True:
-        G = nx.from_numpy_array(G)
+        #G = nx.from_numpy_array(mat)
         metadata = dict(G.nodes(data=True))
         if metadata[list(G.nodes())[0]] == {}: #No community structure, no metadata
             plt.figure(1)
@@ -218,6 +214,8 @@ def Numerical_Integration_perturbation(G, dynamics, SteadyState_ref, node1, node
         xx = odeint(epi.Model_Epidemics, ci, times, args = (G,fixed_node))
     elif dynamics == 'Synchronization':
         xx = odeint(syn.Model_Synchronization, ci, times, args = (G,fixed_node))
+    elif dynamics == 'Synchronization_norm':
+        xx = odeint(syn.Model_Synchronization_norm, ci, times, args = (G,fixed_node))
     elif dynamics == 'Neuronal':
         xx = odeint(neu.Model_Neuronal, ci, times, args = (G,fixed_node))
     elif dynamics == 'NoisyVM':
@@ -355,8 +353,6 @@ def Jacobian(G, dynamics, SteadyState, norm = False, args = []):
         J = reg2.Jacobian_Regulatory2(G, SteadyState, *args)
     elif dynamics == 'Epidemics':
         J = epi.Jacobian_Epidemics(G, SteadyState, *args)
-    elif dynamics == 'Epidemics_norm':
-        J = epi.Jacobian_Epidemics_norm(G, SteadyState, *args)
     elif dynamics == 'Synchronization':
         J = syn.Jacobian_Synchronization(G, SteadyState, *args)
     elif dynamics == 'Synchronization_norm':
@@ -364,8 +360,6 @@ def Jacobian(G, dynamics, SteadyState, norm = False, args = []):
     elif dynamics == 'Neuronal':
         J = neu.Jacobian_Neuronal(G, SteadyState, *args)
     elif dynamics == 'NoisyVM':
-        J = nvm.Jacobian_NoisyVM(G, SteadyState, *args)
-    elif dynamics == 'NoisyVM_norm':
         J = nvm.Jacobian_NoisyVM(G, SteadyState, *args)
     elif dynamics == 'DiffInt':
         J = dfi.Jacobian_DiffusionInteraction(G, SteadyState, *args)
@@ -385,7 +379,6 @@ def Jacobian(G, dynamics, SteadyState, norm = False, args = []):
     #larg_eig = np.max(np.abs(eigs))
     #print('largest eig:', larg_eig)
     if norm:
-        print(r'Normalizing jacobian - $\lambda_{max}=$'+str(np.max(np.abs(eigs))))
         J = J / np.max(np.abs(eigs))
 
     return J
