@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+plt.rcParams['font.size'] = 13
 from scipy.linalg import expm, eig
 from scipy.cluster.hierarchy import linkage, dendrogram, fcluster
 from scipy.spatial.distance import squareform
@@ -91,27 +92,27 @@ def diffusion_distance(mat, show=True, method='ward', args=[], name=None):
         np.savetxt('results/diffusion_'+name, avg_dd)
     
     if show:
-        f, axs = plt.subplots(2, 2, gridspec_kw={'height_ratios': [1.2, 1]}, figsize=(8,7))
-        
+        f, axs = plt.subplots(1, 3, gridspec_kw={'width_ratios': [1.1, 1, 1]}, figsize=(14,4))
         #plot_communities(mat, best_part, ax)
-        nx.draw(nx.from_numpy_array(mat), ax=axs[0,0])
+        #nx.draw(nx.from_numpy_array(mat), ax=axs[0,0])
         
-        plt.subplot(axs[0,1])
+        plt.subplot(axs[0])
         im = plt.imshow(avg_dd, cmap='cividis')
         plt.colorbar(im, fraction=0.046, pad=0.04)
         plt.axis('off')
         plt.title('Average diffusion distance')
         
-        plt.subplot(axs[1,0])
+        plt.subplot(axs[1])
         eigvals, eigvecs = eig(-laplacian)
         plt.plot(eigvals.real, eigvals.imag, 'o')
+        #plt.axvline(0, lw=0.8)
         plt.xlabel(r'$Re(\lambda)$')
         plt.ylabel(r'$Im(\lambda)$')
         plt.title('Eigenvalues')
         
-        plt.subplot(axs[1,1])
-        dendrogram(Z)
-        plt.title(f'Method: {method}')
+        plt.subplot(axs[2])
+        dendrogram(Z, color_threshold=0)
+        plt.title(f'Dendrogram (method: {method})')
         
         plt.tight_layout()
         plt.show()
@@ -148,27 +149,27 @@ def jacobian_distance(mat, dynamics, norm=False, show=True, method='ward', args=
         np.savetxt('results/'+dynamics+'_'+str(args)+'_'+name, avg_dd)
     
     if show:
-        f, axs = plt.subplots(2, 2, gridspec_kw={'height_ratios': [1.2, 1]}, figsize=(8,7))
-        
+        f, axs = plt.subplots(1, 3, gridspec_kw={'width_ratios': [1.1, 1, 1]}, figsize=(14,4))
         #plot_communities(mat, best_part, ax)
-        nx.draw(nx.from_numpy_array(mat), ax=axs[0,0])
+        #nx.draw(nx.from_numpy_array(mat), ax=axs[0,0])
         
-        plt.subplot(axs[0,1])
+        plt.subplot(axs[0])
         im = plt.imshow(avg_dd, cmap='cividis')
         plt.colorbar(im, fraction=0.046, pad=0.04)
         plt.axis('off')
-        plt.title('Average diffusion distance')
+        plt.title('Average jacobian distance')
         
-        plt.subplot(axs[1,0])
+        plt.subplot(axs[1])
         eigvals, eigvecs = eig(jacobian)
         plt.plot(eigvals.real, eigvals.imag, 'o')
+        #plt.axvline(0, lw=0.8)
         plt.xlabel(r'$Re(\lambda)$')
         plt.ylabel(r'$Im(\lambda)$')
         plt.title('Eigenvalues')
         
-        plt.subplot(axs[1,1])
-        dendrogram(Z)
-        plt.title(f'Method: {method}')
+        plt.subplot(axs[2])
+        dendrogram(Z, color_threshold=0)
+        plt.title(f'Dendrogram (method: {method})')
         
         plt.tight_layout()
         plt.show()

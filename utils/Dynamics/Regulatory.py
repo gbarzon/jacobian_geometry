@@ -1,8 +1,5 @@
-
-
 import numpy as np
 import networkx as nx
-
 
 
 def Model_Regulatory(xx, t, G, fixed_node, B = 1., R = 1., a = 1, h = 2):
@@ -49,10 +46,3 @@ def Jacobian_Regulatory(G, SteadyState, B = 1., R = 1., a = 1, h = 2):
             J[i][neighbor] = R*hill_prime[neighbor]
 
     return J
-
-
-
-
-
-
-

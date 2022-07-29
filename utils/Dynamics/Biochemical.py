@@ -8,7 +8,6 @@ def Model_Biochemical(xx, t, G, fixed_node, F = 1., B = 1., R = 1.):
     m_2 = "R*xx[j]"
     """
     dxdt = []
-    
 
     for i in range(G.number_of_nodes()):
         if i == fixed_node:
@@ -39,10 +38,3 @@ def Jacobian_Biochemical(G, SteadyState, F = 1., B = 1., R = 1.):
             J[i][neighbor] = -R*SteadyState[i]
 
     return J
-
-
-
-
-
-
-

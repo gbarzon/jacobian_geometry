@@ -97,6 +97,9 @@ def Numerical_Integration(G, dynamics, initial_state,
 				   network has more than 1e+12 nodes ..)
     '''
     
+    G = nx.from_numpy_array(G)
+    print(args)
+    
     if dynamics == 'Mutualistic':
         xx = odeint(mut.Model_Mutualistic, initial_state, times, args = (G,fixed_node, *args))
     elif dynamics == 'Biochemical':
@@ -135,7 +138,7 @@ def Numerical_Integration(G, dynamics, initial_state,
         
     # plotting each node dynamics
     if show == True:
-        G = nx.from_numpy_array(G)
+        #G = nx.from_numpy_array(G)
         metadata = dict(G.nodes(data=True))
         if metadata[list(G.nodes())[0]] == {}: #No community structure, no metadata
             plt.figure(1)
@@ -292,57 +295,10 @@ def myNumerical_Integration_perturbation(G, dynamics, SteadyState_ref, node1, pe
 
     return xx
 
-def oldJacobian(G, dynamics, SteadyState, perturbation_strength, t_list):
+def Jacobian(G, dynamics, SteadyState, norm = False, args = []):
+    G = nx.from_numpy_array(G)
+    print(args)
     
-    num_nodes = G.number_of_nodes()
-    
-    if dynamics == 'Mutualistic':
-        J = mut.Jacobian_Mutualistic(G, SteadyState)
-    elif dynamics == 'Biochemical':
-        J = bio.Jacobian_Biochemical(G, SteadyState)
-    elif dynamics == 'Population':
-        J = pop.Jacobian_Population(G, SteadyState)
-    elif dynamics == 'Regulatory':
-        J = reg.Jacobian_Regulatory(G, SteadyState)
-    elif dynamics == 'Regulatory2':
-        J = reg2.Jacobian_Regulatory2(G, SteadyState)
-    elif dynamics == 'Epidemics':
-        J = epi.Jacobian_Epidemics(G, SteadyState)
-    elif dynamics == 'Synchronization':
-        J = syn.Jacobian_Synchronization(G, SteadyState)
-    elif dynamics == 'Neuronal':
-        J = neu.Jacobian_Neuronal(G, SteadyState)
-    elif dynamics == 'NoisyVM':
-        J = nvm.Jacobian_NoisyVM(G, SteadyState)
-    else:
-        print(dynamics)
-        raise ValueError('Unknown dynamics. Manual exiting')
-    
-    #Checking that matrix is symmetric (in the position of the elements, not in their value)
-    J2 = J/J
-    J2[np.isnan(J2)] = 0
-    if check_symmetric(J2) == False:
-        raise ValueError("The Jacobian is not symmetric. Manual exiting")
-    
-    d_t = [] # average distance at different t
-    
-    for t in t_list:
-        expJ = expm(J*t)
-    
-        d = 0
-        for i in range(0, num_nodes):
-            for j in range(0, num_nodes):
-                d_ij_tmp = perturbation_strength*(expJ[:,i] - expJ[:,j]) # qui potrei mettere dopo perturbation strength
-                d_ij = np.sqrt(d_ij_tmp.dot(d_ij_tmp))
-                d += d_ij
-
-        d = d / (num_nodes*num_nodes)
-
-        d_t.append(d)
-
-    return d_t
-
-def Jacobian(G, dynamics, SteadyState, norm = False, args = []):    
     if dynamics == 'Mutualistic':
         J = mut.Jacobian_Mutualistic(G, SteadyState, *args)
     elif dynamics == 'Biochemical':

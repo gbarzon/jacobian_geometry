@@ -2,6 +2,7 @@
 .git
 .gitattributes
 **/.ipynb_checkpoints/
-*.png
+*.jpg
 *.pptx
 **/__pycache__/
+/results/*
