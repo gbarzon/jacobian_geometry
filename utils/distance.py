@@ -1,6 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 plt.rcParams['font.size'] = 13
+from mpl_toolkits.axes_grid1.inset_locator import inset_axes
+
 from scipy.linalg import expm, eig
 from scipy.cluster.hierarchy import linkage, dendrogram, fcluster
 from scipy.spatial.distance import squareform
@@ -67,7 +69,7 @@ def plot_communities(mat, comms, ax=None):
     nx.draw(nx.from_numpy_array(mat), node_color=node_color, with_labels=False, ax=ax)
     #plt.show()
 
-def diffusion_distance(mat, show=True, method='ward', args=[], name=None):
+def diffusion_distance(mat, show=True, inset=False, method='ward', args=[], name=None):
     '''
     method = single, complete, average, weighted, centroid, median, ward
     '''
@@ -92,36 +94,11 @@ def diffusion_distance(mat, show=True, method='ward', args=[], name=None):
         np.savetxt('results/diffusion_'+name, avg_dd)
     
     if show:
-        f, axs = plt.subplots(1, 3, gridspec_kw={'width_ratios': [1.1, 1, 1]}, figsize=(14,4))
-        #plot_communities(mat, best_part, ax)
-        #nx.draw(nx.from_numpy_array(mat), ax=axs[0,0])
-        
-        plt.subplot(axs[0])
-        im = plt.imshow(avg_dd, cmap='cividis')
-        plt.colorbar(im, fraction=0.046, pad=0.04)
-        plt.axis('off')
-        plt.title('Average diffusion distance')
-        
-        plt.subplot(axs[1])
-        eigvals, eigvecs = eig(-laplacian)
-        plt.plot(eigvals.real, eigvals.imag, 'o')
-        #plt.axvline(0, lw=0.8)
-        plt.xlabel(r'$Re(\lambda)$')
-        plt.ylabel(r'$Im(\lambda)$')
-        plt.title('Eigenvalues')
-        
-        plt.subplot(axs[2])
-        dendrogram(Z, color_threshold=0)
-        plt.title(f'Dendrogram (method: {method})')
-        
-        plt.tight_layout()
-        plt.show()
-        
-        #plot_clustermap(avg_dd)
+        plot_results(avg_dd, -laplacian, Z, method, inset)
     
     return avg_dd, Z
 
-def jacobian_distance(mat, dynamics, norm=False, show=True, method='ward', args=[], name=None):
+def jacobian_distance(mat, dynamics, norm=False, show=True, inset=False, method='ward', args=[], name=None):
     '''
     method = single, complete, average, weighted, centroid, median, ward
     '''
@@ -145,35 +122,48 @@ def jacobian_distance(mat, dynamics, norm=False, show=True, method='ward', args=
     print('- Compute hierarchical clustering with method {}...'.format(method))
     Z = linkage(squareform(avg_dd), method=method)
     
+    # Save results
     if name is not None:
         np.savetxt('results/'+dynamics+'_'+str(args)+'_'+name, avg_dd)
     
+    # Plot results
     if show:
-        f, axs = plt.subplots(1, 3, gridspec_kw={'width_ratios': [1.1, 1, 1]}, figsize=(14,4))
-        #plot_communities(mat, best_part, ax)
-        #nx.draw(nx.from_numpy_array(mat), ax=axs[0,0])
-        
-        plt.subplot(axs[0])
-        im = plt.imshow(avg_dd, cmap='cividis')
-        plt.colorbar(im, fraction=0.046, pad=0.04)
-        plt.axis('off')
-        plt.title('Average jacobian distance')
-        
-        plt.subplot(axs[1])
-        eigvals, eigvecs = eig(jacobian)
-        plt.plot(eigvals.real, eigvals.imag, 'o')
-        #plt.axvline(0, lw=0.8)
-        plt.xlabel(r'$Re(\lambda)$')
-        plt.ylabel(r'$Im(\lambda)$')
-        plt.title('Eigenvalues')
-        
-        plt.subplot(axs[2])
-        dendrogram(Z, color_threshold=0)
-        plt.title(f'Dendrogram (method: {method})')
-        
-        plt.tight_layout()
-        plt.show()
-        
-        #plot_clustermap(avg_dd)
+        plot_results(avg_dd, jacobian, Z, method, inset)
     
     return avg_dd, Z
+
+def plot_results(avg_dd, mat_to_exp, Z, method, inset):
+    f, axs = plt.subplots(1, 3, gridspec_kw={'width_ratios': [1.1, 1, 1]}, figsize=(14,4))
+    #plot_communities(mat, best_part, ax)
+    #nx.draw(nx.from_numpy_array(mat), ax=axs[0,0])
+        
+    plt.subplot(axs[0])
+    im = plt.imshow(avg_dd, cmap='cividis')
+    plt.colorbar(im, fraction=0.046, pad=0.04)
+    plt.axis('off')
+    plt.title('Average distance')
+        
+    eigvals, eigvecs = eig(mat_to_exp)
+    plt.subplot(axs[1])
+    plt.plot(np.arange(len(avg_dd))+1, -np.sort(np.abs(eigvals)), 'o-')
+    plt.xlabel(r'Rank index $i$')
+    plt.ylabel(r'Eigval $\lambda_i$')
+    plt.xscale('log')
+    plt.title('Eigenvalues')
+
+    # Inset
+    if inset:
+        axins = inset_axes(axs[1], width="40%", height="40%")
+        axins.plot(np.arange(len(avg_dd))+1, np.sum(eigvecs**4, axis=0), 'o-', c='red')
+        axins.set_xscale('log')
+        axins.set_xlabel(r'Rank index $i$')
+        axins.set_ylabel(r'IPR')
+    
+    plt.subplot(axs[2])
+    dendrogram(Z, color_threshold=0)
+    plt.title(f'Dendrogram (method: {method})')
+        
+    plt.tight_layout()
+    plt.show()
+        
+    #plot_clustermap(avg_dd)
