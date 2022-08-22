@@ -1,16 +1,14 @@
 import numpy as np
 import matplotlib.pyplot as plt
 plt.rcParams['font.size'] = 13
-from mpl_toolkits.axes_grid1.inset_locator import inset_axes
+from matplotlib.gridspec import GridSpec
 
 from scipy.linalg import expm, eig
 from scipy.cluster.hierarchy import linkage, dendrogram, fcluster
 from scipy.spatial.distance import squareform
-from sklearn.metrics import silhouette_score
 
-from utils.plotter import plot_clustermap
+from seaborn import clustermap
 
-import igraph as ig
 import networkx as nx
 
 from tqdm.auto import tqdm
@@ -68,8 +66,9 @@ def plot_communities(mat, comms, ax=None):
     #mat = nx.from_numpy_array(mat)
     nx.draw(nx.from_numpy_array(mat), node_color=node_color, with_labels=False, ax=ax)
     #plt.show()
+    
 
-def diffusion_distance(mat, show=True, inset=False, method='ward', args=[], name=None):
+def diffusion_distance(mat, show=True, method='ward', args=[], name=None):
     '''
     method = single, complete, average, weighted, centroid, median, ward
     '''
@@ -83,7 +82,6 @@ def diffusion_distance(mat, show=True, inset=False, method='ward', args=[], name
     
     # Compute average diffusion distance
     print('- Compute average distance...')
-    
     avg_dd = average_distance(-laplacian)
     
     # Compute hierarchical clustering
@@ -94,11 +92,11 @@ def diffusion_distance(mat, show=True, inset=False, method='ward', args=[], name
         np.savetxt('results/diffusion_'+name, avg_dd)
     
     if show:
-        plot_results(avg_dd, -laplacian, Z, method, inset)
+        plot_results(avg_dd, -laplacian, Z, 'Diffusion', method)
     
     return avg_dd, Z
 
-def jacobian_distance(mat, dynamics, norm=False, show=True, inset=False, method='ward', args=[], name=None):
+def jacobian_distance(mat, dynamics, norm=False, show=True, method='ward', args=[], name=None):
     '''
     method = single, complete, average, weighted, centroid, median, ward
     '''
@@ -128,42 +126,123 @@ def jacobian_distance(mat, dynamics, norm=False, show=True, inset=False, method=
     
     # Plot results
     if show:
-        plot_results(avg_dd, jacobian, Z, method, inset)
+        plot_results(avg_dd, jacobian, Z, dynamics, method)
     
     return avg_dd, Z
 
-def plot_results(avg_dd, mat_to_exp, Z, method, inset):
-    f, axs = plt.subplots(1, 3, gridspec_kw={'width_ratios': [1.1, 1, 1]}, figsize=(14,4))
+'''
+def plot_results(avg_dd, mat_to_exp, Z, dynamics, method):
+    #f, axs = plt.subplots(1, 3, gridspec_kw={'width_ratios': [1.1, 1, 1]}, figsize=(14,4))
+    
+    fig = plt.figure(figsize=(14,4), constrained_layout=False)
+    gs = GridSpec(2,3, width_ratios=[1, 1.3, 1], height_ratios=[1.4, 1])
+    ax1 = fig.add_subplot(gs[0, 0])
+    ax2 = fig.add_subplot(gs[1, 0])
+    ax0 = fig.add_subplot(gs[:, 1])
+    ax3 = fig.add_subplot(gs[:, 2])
+    
     #plot_communities(mat, best_part, ax)
     #nx.draw(nx.from_numpy_array(mat), ax=axs[0,0])
         
-    plt.subplot(axs[0])
+    plt.subplot(ax0)
     im = plt.imshow(avg_dd, cmap='cividis')
-    plt.colorbar(im, fraction=0.046, pad=0.04)
+    cbar = plt.colorbar(im, fraction=0.046, pad=0.04)
+    #cbar.ax.set_title(r'$\overline{d}_{ij}$')
+    cbar.ax.set_ylabel(r'$\overline{d}_{ij}$', rotation=90)
     plt.axis('off')
-    plt.title('Average distance')
-        
-    eigvals, eigvecs = eig(mat_to_exp)
-    plt.subplot(axs[1])
-    plt.plot(np.arange(len(avg_dd))+1, -np.sort(np.abs(eigvals)), 'o-')
-    plt.xlabel(r'Rank index $i$')
-    plt.ylabel(r'Eigval $\lambda_i$')
-    plt.xscale('log')
-    plt.title('Eigenvalues')
-
-    # Inset
-    if inset:
-        axins = inset_axes(axs[1], width="40%", height="40%")
-        axins.plot(np.arange(len(avg_dd))+1, np.sum(eigvecs**4, axis=0), 'o-', c='red')
-        axins.set_xscale('log')
-        axins.set_xlabel(r'Rank index $i$')
-        axins.set_ylabel(r'IPR')
+    #plt.title('Average distance')
     
-    plt.subplot(axs[2])
+    # Get eigevalues and eigenvectors
+    eigvals, eigl, eigr = eig(mat_to_exp, left=True, right=True)
+    # Get order
+    order = np.argsort(-eigvals)
+    # Get partecipation ratio
+    pr = ( np.sum(eigl**2 *eigr**2, axis=0) / np.sum(eigl * eigr, axis=0)**2 )**-1
+    
+    plt.subplot(ax1)
+    plt.plot(np.arange(len(avg_dd))+1, eigvals[order], 'o-')
+    #plt.xlabel(r'Rank index $i$')
+    plt.ylabel(r'$\lambda_i$')
+    plt.xscale('log')
+    #plt.title('Eigenvalues')
+    ax1.axes.xaxis.set_ticklabels([])
+    
+    plt.subplot(ax2)
+    plt.plot(np.arange(len(avg_dd))+1, pr[order], 'o-', c='red')
+    plt.xscale('log')
+    #plt.yscale('log')
+    plt.xlabel(r'Rank index $i$')
+    plt.ylabel(r'PR$_i$')
+    
+    plt.subplot(ax3)
     dendrogram(Z, color_threshold=0)
-    plt.title(f'Dendrogram (method: {method})')
+    ax3.spines['right'].set_visible(False)
+    ax3.spines['top'].set_visible(False)
+    ax3.spines['bottom'].set_visible(False)
+    #plt.title(f'Dendrogram (method: {method})')
         
+    plt.suptitle(dynamics)
     plt.tight_layout()
+    #plt.subplots_adjust(wspace=0.5)
+    plt.show()
+'''
+    
+
+def plot_results(avg_dd, mat_to_exp, Z, dynamics, method, figsize=(12,6)):
+    ### Plot clustermap
+    mylinkage = linkage(squareform(avg_dd), method=method)
+    
+    clust_map = clustermap(avg_dd, row_linkage=mylinkage, col_linkage=mylinkage,
+                           cmap='cividis',
+                           #cbar_kws = dict(orientation='vertical'),
+                           cbar_pos = None,
+                           row_colors=None,
+                           tree_kws=dict(linewidths=1.4),
+                           figsize=figsize)
+
+    clust_map.ax_col_dendrogram.set_visible(False) # hide dendrogram above columns
+    #clust_map.set(xlabel='my x label', ylabel='my y label')
+    
+    # Update position
+    clust_map.gs.update(left=0.5)
+    
+    # Setup colorbar
+    cbnorm = Normalize(vmin=0-0.5,vmax=5+0.5,clip=False) #setting the scale
+    #cb = plt.colorbar(cm.ScalarMappable(norm=cbnorm, cmap=newcmp),fraction=1,ax=ax_color,ticks=np.arange(6))
+    
+    ### Plot eigenvalues and partecipation ratio
+    # Add gridspec
+    gs = GridSpec(2,1, left=0.0, right=0.4, bottom=0.1, top=.8, height_ratios=[1, 1])
+    ax1 = clust_map.fig.add_subplot(gs[0])
+    ax2 = clust_map.fig.add_subplot(gs[1])
+    
+    # Get eigevalues and eigenvectors
+    eigvals, eigl, eigr = eig(mat_to_exp, left=True, right=True)
+    # Get order
+    order = np.argsort(-eigvals)
+    # Get partecipation ratio
+    pr = ( np.sum(eigl**2 *eigr**2, axis=0) / np.sum(eigl * eigr, axis=0)**2 )**-1
+    
+    # Plot eigenvalues
+    plt.subplot(ax1)
+    plt.plot(np.arange(len(avg_dd))+1, eigvals[order], 'o-')
+    #plt.xlabel(r'Rank index $i$')
+    plt.ylabel(r'$\lambda_i$')
+    plt.xscale('log')
+    #plt.title('Eigenvalues')
+    ax1.axes.xaxis.set_ticklabels([])
+    
+    # Plot partecipation ratio
+    plt.subplot(ax2)
+    plt.plot(np.arange(len(avg_dd))+1, pr[order], 'o-', c='red')
+    plt.xscale('log')
+    #plt.yscale('log')
+    plt.xlabel(r'Rank index $i$')
+    plt.ylabel(r'PR$_i$')
+        
+    plt.suptitle(dynamics)
+    #plt.tight_layout()
+    #plt.subplots_adjust(wspace=0.5)
     plt.show()
         
     #plot_clustermap(avg_dd)
