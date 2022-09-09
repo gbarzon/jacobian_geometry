@@ -2,12 +2,16 @@ import numpy as np
 import matplotlib.pyplot as plt
 plt.rcParams['font.size'] = 13
 from matplotlib.gridspec import GridSpec
+from mpl_toolkits.axes_grid1.inset_locator import inset_axes
+from matplotlib import cm
+from matplotlib.colors import Normalize
 
 from scipy.linalg import expm, eig
 from scipy.cluster.hierarchy import linkage, dendrogram, fcluster
 from scipy.spatial.distance import squareform
 
-from seaborn import clustermap
+from seaborn import clustermap, hls_palette
+import pandas as pd
 
 import networkx as nx
 
@@ -68,7 +72,7 @@ def plot_communities(mat, comms, ax=None):
     #plt.show()
     
 
-def diffusion_distance(mat, show=True, method='ward', args=[], name=None):
+def diffusion_distance(mat, show=True, method='ward', args=[], name=None, comms=None, cs=None, title=None):
     '''
     method = single, complete, average, weighted, centroid, median, ward
     '''
@@ -92,11 +96,11 @@ def diffusion_distance(mat, show=True, method='ward', args=[], name=None):
         np.savetxt('results/diffusion_'+name, avg_dd)
     
     if show:
-        plot_results(avg_dd, -laplacian, Z, 'Diffusion', method)
+        plot_results(avg_dd, -laplacian, Z, 'Diffusion', method, comms, cs, title)
     
-    return avg_dd, Z
+    return avg_dd, Z, -laplacian
 
-def jacobian_distance(mat, dynamics, norm=False, show=True, method='ward', args=[], name=None):
+def jacobian_distance(mat, dynamics, norm=False, show=True, method='ward', args=[], name=None, comms=None, cs=None, title=None):
     '''
     method = single, complete, average, weighted, centroid, median, ward
     '''
@@ -108,7 +112,7 @@ def jacobian_distance(mat, dynamics, norm=False, show=True, method='ward', args=
     # Get steady state
     initial_state = np.random.random(N)
     steady_state = CF.Numerical_Integration(mat, dynamics, initial_state, show=True, args=args)
-    
+        
     # Compute jacobian
     jacobian = CF.Jacobian(mat, dynamics, steady_state[-1], norm=norm, args=args)
     
@@ -126,9 +130,9 @@ def jacobian_distance(mat, dynamics, norm=False, show=True, method='ward', args=
     
     # Plot results
     if show:
-        plot_results(avg_dd, jacobian, Z, dynamics, method)
+        plot_results(avg_dd, jacobian, Z, dynamics, method, comms, cs, title)
     
-    return avg_dd, Z
+    return avg_dd, Z, jacobian
 
 '''
 def plot_results(avg_dd, mat_to_exp, Z, dynamics, method):
@@ -188,37 +192,52 @@ def plot_results(avg_dd, mat_to_exp, Z, dynamics, method):
 '''
     
 
-def plot_results(avg_dd, mat_to_exp, Z, dynamics, method, figsize=(12,6)):
+def plot_results(avg_dd, mat_to_exp, Z, dynamics, method, comms, row_colors, title, figsize=(12,5)):
+    N = len(mat_to_exp)
+    
     ### Plot clustermap
+    # Create linkage
     mylinkage = linkage(squareform(avg_dd), method=method)
     
+    # Setup row colors
+    if row_colors is None and comms is not None:
+        #labels = np.repeat(np.arange(n_comms),N//n_comms)
+        #row_colors = [palette[i] for i in labels]
+        n_comms = len(np.unique(comms))
+        palette = hls_palette(n_comms)
+        row_colors = [palette[i] for i in comms]
+    
+    # Create clustermap
     clust_map = clustermap(avg_dd, row_linkage=mylinkage, col_linkage=mylinkage,
                            cmap='cividis',
-                           #cbar_kws = dict(orientation='vertical'),
-                           cbar_pos = None,
-                           row_colors=None,
+                           #cbar_kws = dict(orientation='horizontal'),
+                           cbar_pos=None,
+                           row_colors=row_colors,
                            tree_kws=dict(linewidths=1.4),
                            figsize=figsize)
 
     clust_map.ax_col_dendrogram.set_visible(False) # hide dendrogram above columns
-    #clust_map.set(xlabel='my x label', ylabel='my y label')
     
     # Update position
-    clust_map.gs.update(left=0.5)
+    clust_map.gs.update(left=0.41)
     
     # Setup colorbar
-    cbnorm = Normalize(vmin=0-0.5,vmax=5+0.5,clip=False) #setting the scale
-    #cb = plt.colorbar(cm.ScalarMappable(norm=cbnorm, cmap=newcmp),fraction=1,ax=ax_color,ticks=np.arange(6))
+    cbnorm = Normalize(vmin=np.min(avg_dd),vmax=np.max(avg_dd)) #setting the scale
+    cb = plt.colorbar(cm.ScalarMappable(norm=cbnorm, cmap='cividis'),ax=clust_map.ax_heatmap,pad=0.13)
+    cb.ax.set_title(r'$\overline{d}_{ij}$')
+    #axins1 = inset_axes(clust_map.ax_heatmap, width="50%", height="5%", loc='upper center')
+
     
     ### Plot eigenvalues and partecipation ratio
     # Add gridspec
-    gs = GridSpec(2,1, left=0.0, right=0.4, bottom=0.1, top=.8, height_ratios=[1, 1])
+    gs = GridSpec(2,1, left=0.0, right=0.39, bottom=0.15, top=.85, height_ratios=[1, 1])
     ax1 = clust_map.fig.add_subplot(gs[0])
     ax2 = clust_map.fig.add_subplot(gs[1])
     
     # Get eigevalues and eigenvectors
     eigvals, eigl, eigr = eig(mat_to_exp, left=True, right=True)
     # Get order
+    eigvals = eigvals.real
     order = np.argsort(-eigvals)
     # Get partecipation ratio
     pr = ( np.sum(eigl**2 *eigr**2, axis=0) / np.sum(eigl * eigr, axis=0)**2 )**-1
@@ -235,14 +254,13 @@ def plot_results(avg_dd, mat_to_exp, Z, dynamics, method, figsize=(12,6)):
     # Plot partecipation ratio
     plt.subplot(ax2)
     plt.plot(np.arange(len(avg_dd))+1, pr[order], 'o-', c='red')
+    plt.ylim(-5,N*11/10)
     plt.xscale('log')
     #plt.yscale('log')
     plt.xlabel(r'Rank index $i$')
     plt.ylabel(r'PR$_i$')
         
-    plt.suptitle(dynamics)
-    #plt.tight_layout()
-    #plt.subplots_adjust(wspace=0.5)
+    plt.suptitle(title)
+    plt.tight_layout()
+    plt.subplots_adjust(hspace=0.1, top=1.1)
     plt.show()
-        
-    #plot_clustermap(avg_dd)

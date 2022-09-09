@@ -18,7 +18,7 @@ def Model_NoisyVM(xx, t, G, fixed_node, A = 0., B = 1., C = 1.):
         else:
             m_0 = A - B * xx[i]
             m_1 = C
-            m_2 = sum([xx[j]/G.degree(i) for j in G.neighbors(i)])
+            m_2 = sum([xx[j] for j in G.neighbors(i)]) / G.degree(i)
 
             dxdt.append(m_0 + m_1*m_2 )
     return np.array(dxdt)
@@ -39,7 +39,7 @@ def Jacobian_NoisyVM(G, SteadyState, A = 0., B = 1., C = 1.):
         else:
             term2 = 0
             
-        J[i][i] = term1 #+ term2
+        J[i][i] = term1 + term2
     
         #off-diagonal terms
         for neighbor in list(G.neighbors(i)):
