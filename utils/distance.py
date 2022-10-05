@@ -56,12 +56,13 @@ def average_distance(mat_enr, tmax=None, display=True, return_snapshot=False):
             d_t_ij[t-1] = compute_distance(mat_enr, t)
     
     # Average along times
-    average = np.mean(d_t_ij, axis=0)
+    average_mat = np.mean(d_t_ij, axis=0)
+    average_dist = np.mean(d_t_ij, axis=2).mean(axis=1)
     
     if return_snapshot:
-        return average, d_t_ij
+        return average_mat, average_dist, d_t_ij
     else:
-        return average
+        return average_mat, average_dist
 
 def plot_communities(mat, comms, ax=None):
     n_comms = len(np.unique(comms))
@@ -86,19 +87,19 @@ def diffusion_distance(mat, show=True, method='ward', args=[], name=None, comms=
     
     # Compute average diffusion distance
     print('- Compute average distance...')
-    avg_dd = average_distance(-laplacian)
+    avg_mat, avg_dd = average_distance(-laplacian)
     
     # Compute hierarchical clustering
     print('- Compute hierarchical clustering with method {}...'.format(method))
-    Z = linkage(squareform(avg_dd), method=method)
+    Z = linkage(squareform(avg_mat), method=method)
     
     if name is not None:
-        np.savetxt('results/diffusion_'+name, avg_dd)
+        np.savetxt('results/diffusion_'+name, avg_mat)
     
     if show:
-        plot_results(avg_dd, -laplacian, Z, 'Diffusion', method, comms, cs, title)
+        plot_results(avg_mat, -laplacian, Z, 'Diffusion', method, comms, cs, title)
     
-    return avg_dd, Z, -laplacian
+    return avg_mat, avg_dd, Z, -laplacian
 
 def jacobian_distance(mat, dynamics, norm=False, show=True, method='ward', args=[], name=None, comms=None, cs=None, title=None):
     '''
@@ -118,21 +119,21 @@ def jacobian_distance(mat, dynamics, norm=False, show=True, method='ward', args=
     
     # Compute average jacobian distance
     print('- Compute average distance...')
-    avg_dd = average_distance(jacobian)
+    avg_mat, avg_dd = average_distance(jacobian)
     
     # Compute hierarchical clustering
     print('- Compute hierarchical clustering with method {}...'.format(method))
-    Z = linkage(squareform(avg_dd), method=method)
+    Z = linkage(squareform(avg_mat), method=method)
     
     # Save results
     if name is not None:
-        np.savetxt('results/'+dynamics+'_'+str(args)+'_'+name, avg_dd)
+        np.savetxt('results/'+dynamics+'_'+str(args)+'_'+name, avg_mat)
     
     # Plot results
     if show:
-        plot_results(avg_dd, jacobian, Z, dynamics, method, comms, cs, title)
+        plot_results(avg_mat, jacobian, Z, dynamics, method, comms, cs, title)
     
-    return avg_dd, Z, jacobian
+    return avg_mat, avg_dd, Z, jacobian
 
 '''
 def plot_results(avg_dd, mat_to_exp, Z, dynamics, method):
