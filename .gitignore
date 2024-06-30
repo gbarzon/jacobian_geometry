@@ -4,5 +4,4 @@
 **/.ipynb_checkpoints/
 *.pptx
 **/__pycache__/
-old_results/*
 Cover_jacobian.ipynb
