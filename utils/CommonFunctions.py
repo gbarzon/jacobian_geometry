@@ -83,7 +83,6 @@ def Check_Char_Time(xx,times,epsilon):
 	return char_time
 
 
- 
 def Numerical_Integration(G, dynamics, initial_state, 
 						times = np.linspace(0,50, num = 2000),
 						fixed_node = 1e+12, 
@@ -244,9 +243,10 @@ def Numerical_Integration_perturbation(G, dynamics, SteadyState_ref, node1, node
 
 def myNumerical_Integration_perturbation(G, dynamics, SteadyState_ref, node1, perturbation_strength,
                 						times = np.linspace(0,20, num = 2000),
-                						fixed_node = 1e+12, 
+                						fixed_node = 1e+12,
                 						show = False, 
-                						epsilon = 10**(-8)):
+                						epsilon = 10**(-8),
+                                        args = []):
     """
 	Kwargs:
 	- fixed_nodes: list of integers of nodes indexes to be kept constant during integrations 
@@ -261,23 +261,23 @@ def myNumerical_Integration_perturbation(G, dynamics, SteadyState_ref, node1, pe
         raise ValueError("Manual exiting; %s should be >=0" % ci[node1])
 
     if dynamics == 'Mutualistic':
-        xx = odeint(mut.Model_Mutualistic, ci, times, args = (G,fixed_node))
+        xx = odeint(mut.Model_Mutualistic, ci, times, args = (G,fixed_node,*args))
     elif dynamics == 'Biochemical':
-        xx = odeint(bio.Model_Biochemical, ci, times, args = (G,fixed_node))
+        xx = odeint(bio.Model_Biochemical, ci, times, args = (G,fixed_node,*args))
     elif dynamics == 'Population':
-        xx = odeint(pop.Model_Population, ci, times, args = (G,fixed_node))
+        xx = odeint(pop.Model_Population, ci, times, args = (G,fixed_node,*args))
     elif dynamics == 'Regulatory':
-        xx = odeint(reg.Model_Regulatory, ci, times, args = (G,fixed_node))
+        xx = odeint(reg.Model_Regulatory, ci, times, args = (G,fixed_node,*args))
     elif dynamics == 'Regulatory2':
-        xx = odeint(reg2.Model_Regulatory2, ci, times, args = (G,fixed_node))
+        xx = odeint(reg2.Model_Regulatory2, ci, times, args = (G,fixed_node,*args))
     elif dynamics == 'Epidemics':
-        xx = odeint(epi.Model_Epidemics, ci, times, args = (G,fixed_node))
+        xx = odeint(epi.Model_Epidemics, ci, times, args = (G,fixed_node,*args))
     elif dynamics == 'Synchronization':
-        xx = odeint(syn.Model_Synchronization, ci, times, args = (G,fixed_node))
+        xx = odeint(syn.Model_Synchronization, ci, times, args = (G,fixed_node,*args))
     elif dynamics == 'Neuronal':
-        xx = odeint(neu.Model_Neuronal, ci, times, args = (G,fixed_node))
+        xx = odeint(neu.Model_Neuronal, ci, times, args = (G,fixed_node,*args))
     elif dynamics == 'NoisyVM':
-        xx = odeint(nvm.Model_NoisyVM, ci, times, args = (G,fixed_node))
+        xx = odeint(nvm.Model_NoisyVM, ci, times, args = (G,fixed_node,*args))
     else:
         print(dynamics)
         raise ValueError('Unknown dynamics. Manual exiting')
@@ -295,7 +295,7 @@ def myNumerical_Integration_perturbation(G, dynamics, SteadyState_ref, node1, pe
 
     return xx
 
-def Jacobian(G, dynamics, SteadyState, norm = False, args = []):
+def Jacobian(G, dynamics, SteadyState, norm = False, args = [], return_eig=False):
     G = nx.from_numpy_array(G)
     print(args)
     
@@ -338,10 +338,14 @@ def Jacobian(G, dynamics, SteadyState, norm = False, args = []):
     '''
     
     eigs = eig(J)[0]
+    eig_max = np.max(np.abs(eigs))
     #larg_eig = np.max(np.abs(eigs))
     #print('largest eig:', larg_eig)
     if norm:
-        print(r'Normalizing jacobian - $\lambda_{max}=$'+str(np.max(np.abs(eigs))))
-        J = J / np.max(np.abs(eigs))
-
-    return J  
+        print(r'Normalizing jacobian - $\lambda_{max}$='+str(eig_max))
+        J = J / eig_max
+    
+    if return_eig:
+        return J, eig_max
+    else:
+        return J  

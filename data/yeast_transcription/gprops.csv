@@ -1,0 +1,6 @@
+# prop_name, value
+name,yeast_transcription
+description,"Network of operons and their pairwise interactions, via transcription factor-based regulation, within the yeast Saccharomyces cerevisiae"
+citation,"['R. Milo et al., \"Network Motifs: Simple Building Blocks of Complex Networks.\" Science 298, 824-827 (2002)., http://www.weizmann.ac.il/mcb/UriAlon/sites/mcb.UriAlon/files/uploads/CollectionsOfComplexNetwroks/networkmotifs.pdf']"
+url,http://www.weizmann.ac.il/mcb/UriAlon/download/collection-complex-networks
+tags,"['Biological', 'Gene regulation', 'Unweighted']"

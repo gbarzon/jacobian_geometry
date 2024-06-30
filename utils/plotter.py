@@ -81,7 +81,7 @@ def plot_average_dist_matrix_square(results, labels_rows, labels_cols, norm = Fa
 # clustermap want 2d array of observation, not 2d symmetric distance matrix
 # thus, we have to pre compute the linkage and pass it to clustermap
 # https://stackoverflow.com/questions/38705359/how-to-give-sns-clustermap-a-precomputed-distance-matrix
-def plot_clustermap(matrix, method, row_colors=None, figsize=(10,10), linewidths=1.5, title='', name_to_save=None, dpi=200):
+def plot_clustermap(matrix, method='ward', row_colors=None, figsize=(10,10), linewidths=1.5, title='', name_to_save=None, dpi=200):
     
     mylinkage = linkage(squareform(matrix), method=method)
     

@@ -1,0 +1,6 @@
+# prop_name, value
+name,ecoli_transcription (v1.1)
+description,"Network of operons and their pairwise interactions, via transcription factor-based regulation, within the bacteria Escherichia coli"
+citation,"['Shen-Orr et. al, \"Network motifs in the transcriptional regulation network of Escherichia coli.\" Nature Genetics 31, 64-68 (2002)., http://www.nature.com/ng/journal/v31/n1/full/ng881.html']"
+url,http://www.weizmann.ac.il/mcb/UriAlon/e-coli-transcription-network
+tags,"['Biological', 'Gene regulation', 'Unweighted']"

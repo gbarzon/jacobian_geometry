@@ -1,0 +1,7 @@
+# prop_name, value
+name,celegansneural
+description,A network representing the neural connections of the Caenorhabditis elegans nematode
+citation,"['J. G. White, E. Southgate, J. N. Thompson, and S. Brenner, Phil. Trans. R. Soc. London 314, 1-340 (1986), https://doi.org/10.1098/rstb.1986.0056', 'D.J. Watts and S.H. Strogatz, \"Collective dynamics of \'small-world\' networks.\" Nature 393, 440-442 (1998)., research.yahoo.com/files/w_s_NATURE_0.pdf']"
+url,http://www-personal.umich.edu/~mejn/netdata
+tags,"['Biological', 'Connectome', 'Weighted']"
+directed,1.0

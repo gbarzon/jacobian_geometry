@@ -1,0 +1,6 @@
+# prop_name, value
+name,student_cooperation
+description,"Network of cooperation among students in the \"Computer and Network Security\" course at Ben-Gurion University, in 2012. Nodes are students, and edges denote cooperation between students while doing their homework. The graph contains three types of links: Time, Computer, Partners."
+citation,"['M. Fire et al., \"Predicting student exam\'s scores by analyzing social network data.\" International Conference on Active Media Technology, 584-595 (AMT 2012), https://homes.cs.washington.edu/~fire/pdf/fire2012predicting.pdf']"
+url,https://homes.cs.washington.edu/~fire/#section3
+tags,"['Social', 'Offline', 'Multigraph', 'Unweighted']"

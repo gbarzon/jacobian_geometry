@@ -14,6 +14,7 @@ from seaborn import clustermap, hls_palette
 import pandas as pd
 
 import networkx as nx
+import igraph as ig
 
 from tqdm.auto import tqdm
 
@@ -94,8 +95,8 @@ def diffusion_distance(mat, show=True, method='ward', args=[], name=None, comms=
     Z = linkage(squareform(avg_mat), method=method)
     
     if name is not None:
-        np.savetxt('results/diffusion_'+name, avg_mat)
-    
+        np.savetxt('results/diffusion_'+name+'.txt', avg_mat)
+        
     if show:
         plot_results(avg_mat, -laplacian, Z, 'Diffusion', method, comms, cs, title)
     
@@ -127,7 +128,7 @@ def jacobian_distance(mat, dynamics, norm=False, show=True, method='ward', args=
     
     # Save results
     if name is not None:
-        np.savetxt('results/'+dynamics+'_'+str(args)+'_'+name, avg_mat)
+        np.savetxt('results/'+dynamics+'_'+str(args)+'_'+name+'.txt', avg_mat)
     
     # Plot results
     if show:
@@ -227,7 +228,6 @@ def plot_results(avg_dd, mat_to_exp, Z, dynamics, method, comms, row_colors, tit
     cb = plt.colorbar(cm.ScalarMappable(norm=cbnorm, cmap='cividis'),ax=clust_map.ax_heatmap,pad=0.13)
     cb.ax.set_title(r'$\overline{d}_{ij}$')
     #axins1 = inset_axes(clust_map.ax_heatmap, width="50%", height="5%", loc='upper center')
-
     
     ### Plot eigenvalues and partecipation ratio
     # Add gridspec
@@ -265,3 +265,23 @@ def plot_results(avg_dd, mat_to_exp, Z, dynamics, method, comms, row_colors, tit
     plt.tight_layout()
     plt.subplots_adjust(hspace=0.1, top=1.1)
     plt.show()
+    
+def community_detection(mat, method, *args):
+    graph = ig.Graph.Weighted_Adjacency(mat.tolist(), mode=ig.ADJ_UNDIRECTED, attr="weight", loops=False)
+    
+    if method == 'louvain':
+        comms = graph.community_multilevel(weights=graph.es['weight'], return_levels=False)
+    elif method == 'leiden':
+        if len(args)>0:
+            resolution_parameter = args[0]
+        comms = graph.community_leiden(weights=graph.es['weight'], resolution_parameter=resolution_parameter, n_iterations=-1, objective_function='modularity') #objective_function: Constant Potts Model (CPM) or modularity
+    elif method == 'spin_glass':
+        comms = graph.community_spinglass(weights=graph.es['weight'], spins=int(1e3))
+    elif method == 'infomap':
+        comms = graph.community_infomap(edge_weights=graph.es['weight'], trials=10)
+    else:
+        raise( Exception('Community detection method not defined.\n'))
+    
+    print(f'Found {len(np.unique(comms.membership))} communities')
+    
+    return np.array(comms.membership)

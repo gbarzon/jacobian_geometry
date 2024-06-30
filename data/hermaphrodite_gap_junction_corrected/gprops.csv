@@ -1,0 +1,17 @@
+# prop_name, value
+name,celegans_2019 (hermaphrodite_gap_junction_corrected)
+description,"Networks among neurons of both the adult male and adult hermaphrodite worms C. elegans, constructed from electron microscopy series, to include directed edges (chemical) and undirected (gap junction), and spanning including nodes for muscle and non-muscle end organs.
+
+For chemical connections, directed edges go from pre-synaptic cell to post-synaptic cell. 
+
+The 'connectivity' edge property corresponds to the total number of EM serial sections of connectivity, taking into account both the number of synapses and the sizes of synapses.
+
+To provide complete coverage of the entire nervous system, the data are assembled from multiple animals and include connections added by extrapolation in gaps where no data were available. 
+
+For 'synapse' data the edge property 'synapses' contain the number of synapses scored between each pair of cells. These networks differ from the others in not taking into account the sizes of synapses and in showing only connections scored on electron micrographs.  It does not include any connections inserted by extrapolation.  Thus there are cells showing no connection here that are connected in the the other matrices.  Also note, there are more edges in these networks than the total number of synapses scored (synapse lists, Supplementary Information 3).  This is because polyads are listed here more than once (once for each postsynaptic cell).
+
+The '_corrected' networks correspond to corrected versions of the network made available in July 2020.
+"
+citation,"['Cook et al., \"Whole-animal connectomes of both Caenorhabditis elegans sexes.\" Nature 571, 63-71 (2019), https://www.nature.com/articles/s41586-019-1352-7']"
+url,https://wormwiring.org/pages/adjacency.html
+tags,"['Biological', 'Connectome', 'Weighted']"

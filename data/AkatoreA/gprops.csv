@@ -1,6 +1,0 @@
-# prop_name, value
-name,fresh_webs (AkatoreA)
-description,"A set of 26 networks of trophic-level species interactions in streams in New Zealand, Maine and North Carolina. Networks include the identities of aquatic insect, algae and fish species and their trophic interactions. Excel and plain text adjacency matrices available; webs can be downloaded individually or as a group"
-citation,"['R.M. Thompson and C.R. Townsend, \"Impacts on stream food webs of native and exotic forest: an intercontinental comparison.\" Ecology 84, 145-161 (2003)., http://www.jstor.org/stable/3108005']"
-url,https://iwdb.nceas.ucsb.edu/html/thomps_towns.html
-tags,"['Biological', 'Food web', 'Unweighted', 'Metadata']"
