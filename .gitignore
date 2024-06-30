@@ -2,7 +2,7 @@
 .git
 .gitattributes
 **/.ipynb_checkpoints/
-*.jpg
 *.pptx
 **/__pycache__/
-/results/*
+old_results/*
+Cover_jacobian.ipynb
