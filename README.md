@@ -49,7 +49,7 @@ dynamic = 'Epidemics'
 ### Define the dynamical parameters
 B = 1.
 R = 0.05
-params = [R, B]
+params = [B, R]
     
 ### Compute jacobian distance at various tau
 avg_jacobian_distance, _, linkage, jacobian = distance.jacobian_distance(mat, dynamic, args=params[i], norm=True, show=True)
