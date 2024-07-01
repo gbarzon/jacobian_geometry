@@ -12,7 +12,7 @@ To address this challenge, we employ a metric - that we name **Jacobian distance
 
 Let us consider a networked dynamical system
 $$\dot{x}_k = f_k(x_1, \ldots, x_N) \equiv f_k(\mathbf{x}),$$
-where $x_k(t)$ is a variable representing the state of node $k = 1, \ldots, N$ at time $t$. The steady state $\mathbf{x}^{\*}$ of the system is given by $f_k(\mathbf{x} ^*) = 0 \ \forall k$. The time evolution of the perturbation on any node $k$ follows, then,
+where $x_k(t)$ is a variable representing the state of node $k = 1, \ldots, N$ at time $t$. The steady state $\mathbf{x}^{\*}$ of the system is given by $f_k(\mathbf{x}^{\*}) = 0 \ \forall k$. The time evolution of the perturbation on any node $k$ follows, then,
 $$\delta \dot{x}_k(t) = f_k( \mathbf{x}^* + \delta \mathbf{x}(t)).$$
 
 In vectorial notation, we have that $\delta \mathbf{x} \_{(i)}(0) = \delta x_i \mathbf{e} _{i}$, where $\mathbf{e}\_{i}$ is the unitary vector in the $i$-direction, and
@@ -24,6 +24,12 @@ The **Jacobian distance** is then defined as the temporal evolution of the diffe
 d_\tau(i,j) = || \delta \mathbf{x}_{(i)}(\tau) - \delta \mathbf{x}_{(j)}(\tau) || \\
 =  || e^{\mathrm{J}(\mathbf{x}^*) \tau} [\delta x_i \mathbf{e}_{i} - \delta x_j \mathbf{e}_{j}]  ||
 ```
+
+Since we are interested in unveiling the emergent patterns that are most persistent at the mesoscale, it is natural to average the distance matrices,
+```math
+    \overline{d}(i,j) = \frac{1}{\tau_{\text{max}}}\sum_{\tau=1}^{\tau_{\text{max}}} d_\tau(i,j),    
+```
+up to a certain cutoff that we fix $\tau_{\text{max}} \approx N$. In this way, emergent mesoscale patterns, if any, are highlighted.
 
 ## How to compute the Jacobian distance
 
