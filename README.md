@@ -36,7 +36,6 @@ up to a certain cutoff that we fix $\tau_{\text{max}} \approx N$. In this way, e
 ``` python
 ### Import functions
 from utils import distance
-from utils import CommonFunctions as CF
 
 ### Get the network
 N = 128
@@ -52,17 +51,9 @@ dynamic = 'Epidemics'
 B = 1.
 R = 0.05
 params = [R, B]
-
-### Get steady state
-initial_state = np.random.random(N)
-steady_state = CF.Numerical_Integration(mat, dynamic, initial_state, show=True, args=params)
-        
-### Compute jacobian
-jacobian = CF.Jacobian(mat, dynamic, steady_state[-1], norm=True, args=params)
-jacobians.append(jacobian)
     
 ### Compute jacobian distance at various tau
-avg_jacobian_distance = distance.average_distance(jacobian, tmax=None, display=True, return_snapshot=True)
+avg_jacobian_distance, _, linkage, jacobian = distance.jacobian_distance(er, dynamic, args=params[i], norm=True, show=True)
 ```
 
 ## Implemented dynamical processes
