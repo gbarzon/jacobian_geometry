@@ -41,7 +41,6 @@ from utils import distance
 N = 128
 HMshape = [2,2,32]
 avklist = [1,3,20]
-
 mat = HM.HMRandomGraph(HMshape, avklist)
 
 ### Define the dynamical process
@@ -53,7 +52,7 @@ R = 0.05
 params = [R, B]
     
 ### Compute jacobian distance at various tau
-avg_jacobian_distance, _, linkage, jacobian = distance.jacobian_distance(er, dynamic, args=params[i], norm=True, show=True)
+avg_jacobian_distance, _, linkage, jacobian = distance.jacobian_distance(mat, dynamic, args=params[i], norm=True, show=True)
 ```
 
 ## Implemented dynamical processes
