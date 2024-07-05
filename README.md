@@ -34,14 +34,16 @@ up to a certain cutoff that we fix $\tau_{\text{max}} \approx N$. In this way, e
 ## How to compute the Jacobian distance
 
 ``` python
-### Import functions
+### Import utils functions
 from utils import distance
 
 ### Get the network
+# E.g., generate a hierarchical modular network
+from galib.models import HMRandomGraph
 N = 128
 HMshape = [2,2,32]
 avklist = [1,3,20]
-mat = HM.HMRandomGraph(HMshape, avklist)
+mat = HMRandomGraph(HMshape, avklist)
 
 ### Define the dynamical process
 dynamic = 'Epidemics'
@@ -52,6 +54,8 @@ R = 0.05
 params = [B, R]
     
 ### Compute jacobian distance at various tau
+# avg_jacobian_distance: matrix of the pairwise jacobian distance
+# linkage: hierarchical clustering encoded as a linkage matrix (see scipy.cluster.hierarchy.linkage)
 avg_jacobian_distance, _, linkage, jacobian = distance.jacobian_distance(mat, dynamic, args=params[i], norm=True, show=True)
 ```
 
