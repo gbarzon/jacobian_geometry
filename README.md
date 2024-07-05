@@ -4,6 +4,8 @@ Complex systems are characterized by emergent patterns created by the non-trivia
 
 To address this challenge, we employ a metric - that we name **Jacobian distance** - which captures the spatiotemporal spreading of perturbations, enabling us to uncover the latent geometry inherent in network-driven processes.
 
+See our work: Giacomo Barzon, Oriol Artime, Samir Suweis, and Manlio De Domenico. ["Unraveling the mesoscale organization induced by network-driven processes."](https://www.pnas.org/doi/10.1073/pnas.2317608121) PNAS, 2024
+
 <p align="center">
   <img src="figures/jacobian_geometry.png" width="900"/>
 </p>
