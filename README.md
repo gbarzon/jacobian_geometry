@@ -58,7 +58,7 @@ params = [B, R]
 ### Compute jacobian distance at various tau
 # avg_jacobian_distance: matrix of the pairwise jacobian distance
 # linkage: hierarchical clustering encoded as a linkage matrix (see scipy.cluster.hierarchy.linkage)
-avg_jacobian_distance, _, linkage, jacobian = distance.jacobian_distance(mat, dynamic, args=params[i], norm=True, show=True)
+avg_jacobian_distance, _, linkage, jacobian = distance.jacobian_distance(mat, dynamic, args=params, norm=True, show=True)
 ```
 
 ## Implemented dynamical processes
